@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
-import { User, UserInput } from "../models/User";
+import { User, UserDocument, UserInput } from "../models/User";
+import createTokenUser from "../utils/createTokenUser";
+import { attachCookiesToResponse } from "../utils/jwt";
 
 const register = async (req: Request<{}, {}, UserInput>, res: Response) => {
   const { email, fullName, password, role } = req.body;
@@ -16,7 +18,11 @@ const register = async (req: Request<{}, {}, UserInput>, res: Response) => {
 
   const user = await User.create({ fullName, email, password, role: newRole });
 
-  return res.status(201).json({ data: user });
+  const tokenUser = createTokenUser(user as UserDocument);
+
+  attachCookiesToResponse({ res }, tokenUser);
+
+  return res.status(201).json({ tokenUser });
 };
 
 const login = async (req: Request<{}, {}, UserInput>, res: Response) => {
@@ -36,7 +42,11 @@ const login = async (req: Request<{}, {}, UserInput>, res: Response) => {
     return res.status(401).json({ msg: "Invalid credentials!" });
   }
 
-  return res.status(201).json({ data: user });
+  const tokenUser = createTokenUser(user as UserDocument);
+
+  attachCookiesToResponse({ res }, tokenUser);
+
+  return res.status(201).json({ tokenUser });
 };
 
 const logout = async (req: Request, res: Response) => {
