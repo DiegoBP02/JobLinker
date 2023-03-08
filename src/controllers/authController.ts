@@ -6,6 +6,10 @@ import { attachCookiesToResponse } from "../utils/jwt";
 const register = async (req: Request<{}, {}, UserInput>, res: Response) => {
   const { email, fullName, password, role } = req.body;
 
+  if (!email || !fullName || !password) {
+    return res.status(400).json({ msg: "Please provide all values!" });
+  }
+
   const checkAdmin = role === "admin";
   if (checkAdmin) {
     return res
@@ -46,15 +50,26 @@ const login = async (req: Request<{}, {}, UserInput>, res: Response) => {
 
   attachCookiesToResponse({ res }, tokenUser);
 
-  return res.status(201).json({ tokenUser });
-};
-
-const logout = async (req: Request, res: Response) => {
-  res.send("ok");
+  return res.status(200).json({ tokenUser });
 };
 
 const getCurrentUser = async (req: Request, res: Response) => {
-  res.send("ok");
+  // @ts-ignore
+  const { userId } = req.user;
+  const user = await User.findOne({ _id: userId });
+  const tokenUser = createTokenUser(user as UserDocument);
+
+  res.status(200).json({ tokenUser });
+};
+
+const logout = async (req: Request, res: Response) => {
+  res.cookie("token", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+    secure: process.env.NODE_ENV === "production",
+    signed: true,
+  });
+  res.status(200).json({ msg: "User logged out!" });
 };
 
 export { register, login, logout, getCurrentUser };

@@ -7,10 +7,11 @@ import {
   logout,
   getCurrentUser,
 } from "../controllers/authController";
+import { authenticateUser } from "../utils/authentication";
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/logout", logout);
-router.get("/getCurrentUser", getCurrentUser);
+router.get("/getCurrentUser", authenticateUser, getCurrentUser);
+router.get("/logout", authenticateUser, logout);
 
 export default router;

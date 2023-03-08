@@ -9,8 +9,11 @@ const createJWT = (payload: TokenUser): string => {
   return token;
 };
 
-const isTokenValid = (token: string) =>
-  jwt.verify(token, <string>process.env.JWT_SECRET);
+const isTokenValid = (token: string): TokenUser => {
+  const decodedCode: any = jwt.verify(token, <string>process.env.JWT_SECRET);
+  const { fullName, userId, role } = decodedCode;
+  return { fullName, userId, role }; // omit iat and exp
+};
 
 const attachCookiesToResponse = (
   { res }: { res: Response },
