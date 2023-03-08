@@ -22,4 +22,16 @@ const authenticateUser = async (
   }
 };
 
-export { authenticateUser };
+const authorizePermissions = (...roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    // @ts-ignore
+    if (!roles.includes(req.user.role)) {
+      return res
+        .status(401)
+        .json({ msg: "Unauthorized to access this route!" });
+    }
+    next();
+  };
+};
+
+export { authenticateUser, authorizePermissions };

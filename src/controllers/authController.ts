@@ -59,7 +59,7 @@ const getCurrentUser = async (req: Request, res: Response) => {
   const user = await User.findOne({ _id: userId });
   const tokenUser = createTokenUser(user as UserDocument);
 
-  res.status(200).json({ tokenUser });
+  return res.status(200).json({ tokenUser });
 };
 
 const logout = async (req: Request, res: Response) => {
@@ -69,7 +69,7 @@ const logout = async (req: Request, res: Response) => {
     secure: process.env.NODE_ENV === "production",
     signed: true,
   });
-  res.status(200).json({ msg: "User logged out!" });
+  return res.status(200).json({ msg: "User logged out!" });
 };
 
 export { register, login, logout, getCurrentUser };

@@ -13,6 +13,7 @@ import errorHandlerMiddleware from "../middleware/error-handler";
 
 // routes
 import authRouter from "../routes/authRoutes";
+import jobRouter from "../routes/jobRoutes";
 
 function createServer() {
   const app = express();
@@ -24,6 +25,7 @@ function createServer() {
   app.use(cookieParser(<string>process.env.JWT_SECRET));
 
   app.use("/api/v1/auth", authRouter);
+  app.use("/api/v1/jobs", jobRouter);
 
   app.use(notFoundMiddleware);
   app.use(errorHandlerMiddleware);
