@@ -17,7 +17,12 @@ import {
   authorizePermissions,
 } from "../utils/authentication";
 
-router.post("/", authenticateUser, authorizePermissions("company"), createJob);
+router.post(
+  "/",
+  authenticateUser,
+  authorizePermissions("admin", "company"),
+  createJob
+);
 
 router.get("/:id", getJob);
 router.get("/", getAllJobs);
@@ -27,7 +32,7 @@ router.get("/company/:id", getAllJobsByCompany);
 router.patch(
   "/:id",
   authenticateUser,
-  authorizePermissions("company"),
+  authorizePermissions("admin", "company"),
   updateJob
 );
 // router.patch("/user/:id", authenticateUser, authorizePermissions("company"), updateUserJobStatus);

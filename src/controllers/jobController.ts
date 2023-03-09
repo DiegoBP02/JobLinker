@@ -27,7 +27,6 @@ const createJob = async (req: Request<{}, {}, JobInput>, res: Response) => {
 const updateJob = async (req: Request, res: Response) => {
   const { position, description, location, salary, type } = req.body;
   const { id: jobId } = req.params;
-
   const fields = [position, description, location, salary, type];
   if (!fields.some((field) => field !== undefined)) {
     return res.status(400).json({ msg: "Please provide at least one field!" });

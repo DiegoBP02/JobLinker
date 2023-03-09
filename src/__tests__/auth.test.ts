@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import supertest from "supertest";
 import createServer from "../utils/createServer";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import registerHelper from "../utils/testHelpers";
+import { registerHelper } from "../utils/testHelpers";
 
 const app = createServer();
 
@@ -45,7 +45,7 @@ describe("Auth", () => {
       const { status, body, header } = await supertest(app)
         .post(`${URL}/auth/register`)
         .send(registerHelper(1).registerInput);
-      console.log(header);
+
       expect(status).toBe(201);
       expect(body).toEqual(registerHelper(1).registerResult);
       expect(mongoose.isValidObjectId(body.tokenUser.userId)).toBeTruthy();
