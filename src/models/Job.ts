@@ -60,6 +60,18 @@ const JobSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+JobSchema.virtual("applications", {
+  ref: "Application",
+  localField: "_id",
+  foreignField: "job",
+  justOne: false,
+});
+
+JobSchema.pre("remove", async function () {
+  // @ts-ignore
+  await this.model("Application").deleteMany({ job: this._id });
+});
+
 const Job: Model<JobDocument> = mongoose.model<JobDocument>("Job", JobSchema);
 
 export { Job, JobDocument, JobInput };

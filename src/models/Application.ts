@@ -7,6 +7,7 @@ type ApplicationDocument = Document & {
   experience: string;
   portfolio: string;
   certifications: string;
+  education: string;
   user: UserDocument["_id"];
   job: JobDocument["_id"];
 };
@@ -15,6 +16,7 @@ type ApplicationInput = {
   resume: ApplicationDocument["resume"];
   experience: ApplicationDocument["experience"];
   portfolio: ApplicationDocument["portfolio"];
+  education: ApplicationDocument["education"];
   certifications: ApplicationDocument["certifications"];
   job: ApplicationDocument["job"];
 };
@@ -29,15 +31,18 @@ const ApplicationSchema = new mongoose.Schema(
     },
     experience: {
       type: String,
-      default: "No experience",
-      minlength: 6,
+      minlength: 15,
       maxlength: 500,
     },
     portfolio: {
+      minlength: 15,
       type: String,
-      required: [true, "Please provide portfolio!"],
     },
     certifications: {
+      type: String,
+      minlength: 15,
+    },
+    education: {
       type: String,
     },
     user: {
