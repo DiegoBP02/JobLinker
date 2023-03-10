@@ -33,7 +33,11 @@ const createApplication = async (
   }
 
   const application = await Application.create({
-    ...req.body,
+    resume,
+    experience,
+    portfolio,
+    certifications,
+    education,
     // @ts-ignore
     user: req.user.userId,
     job,

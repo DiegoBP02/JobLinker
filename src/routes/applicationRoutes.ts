@@ -8,9 +8,17 @@ import {
   updateApplication,
   deleteApplication,
 } from "../controllers/applicationController";
-import { authenticateUser } from "../utils/authentication";
+import {
+  authenticateUser,
+  authorizePermissions,
+} from "../utils/authentication";
 
-router.post("/", authenticateUser, createApplication);
+router.post(
+  "/",
+  authenticateUser,
+  authorizePermissions("admin", "user"),
+  createApplication
+);
 
 router.get("/:id", authenticateUser, getApplication);
 router.get("/", authenticateUser, getAllApplications);

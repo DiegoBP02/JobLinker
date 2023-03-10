@@ -9,8 +9,7 @@ import {
   getAllJobs,
   getAllJobsByCompany,
   getSingleJobApplicants,
-  deleteUserFromJobApplication,
-  updateUserJobStatus,
+  updateUserApplicationStatus,
 } from "../controllers/jobController";
 import {
   authenticateUser,
@@ -27,7 +26,12 @@ router.post(
 router.get("/:id", getJob);
 router.get("/", getAllJobs);
 router.get("/company/:id", getAllJobsByCompany);
-// router.get("/job/:id", authenticateUser, authorizePermissions("company"), getSingleJobApplicants);
+router.get(
+  "/job/:id",
+  authenticateUser,
+  authorizePermissions("company"),
+  getSingleJobApplicants
+);
 
 router.patch(
   "/:id",
@@ -35,8 +39,12 @@ router.patch(
   authorizePermissions("admin", "company"),
   updateJob
 );
-// router.patch("/user/:id", authenticateUser, authorizePermissions("company"), updateUserJobStatus);
-// router.patch("/job/:id", authenticateUser, authorizePermissions("company"), deleteUserFromJobApplication);
+router.patch(
+  "/user/:id",
+  authenticateUser,
+  authorizePermissions("company"),
+  updateUserApplicationStatus
+);
 
 router.delete(
   "/:id",

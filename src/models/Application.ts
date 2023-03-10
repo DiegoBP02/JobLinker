@@ -8,6 +8,7 @@ type ApplicationDocument = Document & {
   portfolio: string;
   certifications: string;
   education: string;
+  status: string;
   user: UserDocument["_id"];
   job: JobDocument["_id"];
 };
@@ -44,6 +45,11 @@ const ApplicationSchema = new mongoose.Schema(
     },
     education: {
       type: String,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "analysis", "analyzed", "approved", "rejected"],
+      default: "pending",
     },
     user: {
       type: mongoose.Types.ObjectId,

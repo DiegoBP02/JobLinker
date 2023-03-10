@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Application } from "../models/Application";
 import { Job, JobDocument, JobInput } from "../models/Job";
 import checkPermission from "../utils/checkPermission";
 
@@ -98,15 +99,63 @@ const getAllJobsByCompany = async (req: Request, res: Response) => {
 };
 
 const getSingleJobApplicants = async (req: Request, res: Response) => {
-  res.send("getSingleJobApplicants");
+  const { id: jobId } = req.params;
+
+  const job = await Job.findOne({ _id: jobId });
+  if (!job) {
+    return res.status(400).json({ msg: `No job with ${jobId} id found!` });
+  }
+
+  const singleJobApplicants = await Application.find({ job: jobId }).populate({
+    path: "user",
+    select: "fullName email",
+  });
+  if (!singleJobApplicants) {
+    return res
+      .status(400)
+      .json({ msg: `No application for job with ${jobId} id found!` });
+  }
+
+  // @ts-ignore
+  checkPermission(res, req.user, job.companyId);
+
+  return res
+    .status(200)
+    .json({ singleJobApplicants, totalCount: singleJobApplicants.length });
 };
 
-const deleteUserFromJobApplication = async (req: Request, res: Response) => {
-  res.send("deleteUserFromJobApplication");
-};
+const updateUserApplicationStatus = async (req: Request, res: Response) => {
+  const { id: applicationId } = req.params;
+  const { status } = req.body;
 
-const updateUserJobStatus = async (req: Request, res: Response) => {
-  res.send("createupdateUserJobStatusJob");
+  if (!status) {
+    return res.status(400).json({ msg: "Please provide status!" });
+  }
+
+  const application = await Application.findOne({ _id: applicationId });
+  if (!application) {
+    return res
+      .status(400)
+      .json({ msg: `No application with ${applicationId} id found!` });
+  }
+
+  const job = await Job.findOne({ _id: application.job });
+  if (!job) {
+    return res
+      .status(400)
+      .json({ msg: `No job with ${application.job} id found!` });
+  }
+
+  // @ts-ignore
+  checkPermission(res, req.user, job.companyId);
+
+  const updatedApplication = await Application.findOneAndUpdate(
+    { _id: applicationId },
+    { status },
+    { new: true, runValidators: true }
+  );
+
+  return res.status(200).json({ updatedApplication });
 };
 
 export {
@@ -117,6 +166,5 @@ export {
   getAllJobs,
   getAllJobsByCompany,
   getSingleJobApplicants,
-  deleteUserFromJobApplication,
-  updateUserJobStatus,
+  updateUserApplicationStatus,
 };
