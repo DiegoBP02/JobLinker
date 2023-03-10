@@ -20,7 +20,7 @@ type JobInput = {
   type: JobDocument["type"];
 };
 
-const JobSchema = new mongoose.Schema(
+const JobSchema: mongoose.Schema<JobDocument> = new mongoose.Schema(
   {
     position: {
       type: String,

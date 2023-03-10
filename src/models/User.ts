@@ -17,7 +17,7 @@ type UserInput = {
   role: UserDocument["role"];
 };
 
-const UserSchema = new mongoose.Schema(
+const UserSchema: mongoose.Schema<UserDocument> = new mongoose.Schema(
   {
     fullName: {
       type: String,
