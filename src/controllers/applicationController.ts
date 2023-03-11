@@ -20,7 +20,7 @@ const createApplication = async (
 
   const checkJob = await Job.findOne({ _id: job });
   if (!checkJob) {
-    return res.status(400).json({ msg: `No job with ${job} id found!` });
+    return res.status(404).json({ msg: `No job with ${job} id found!` });
   }
 
   const alreadyApplied = await Application.findOne({
@@ -55,7 +55,7 @@ const getApplication = async (req: Request, res: Response) => {
   });
 
   if (!application) {
-    return res.status(400).json({ msg: `No application with ${id} id found!` });
+    return res.status(404).json({ msg: `No application with ${id} id found!` });
   }
 
   //@ts-ignore
@@ -73,7 +73,7 @@ const getAllApplications = async (req: Request, res: Response) => {
     select: "_id position company location salary type",
   });
 
-  if (!applications) {
+  if (applications.length === 0) {
     return res
       .status(400)
       .json({ msg: `No application from user with ${userId} id found!` });
@@ -96,7 +96,7 @@ const updateApplication = async (req: Request, res: Response) => {
 
   const application = await Application.findOne({ _id: id });
   if (!application) {
-    return res.status(400).json({ msg: `No application with ${id} id found!` });
+    return res.status(404).json({ msg: `No application with ${id} id found!` });
   }
 
   //@ts-ignore

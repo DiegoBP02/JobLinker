@@ -2,7 +2,12 @@ import mongoose from "mongoose";
 import supertest from "supertest";
 import createServer from "../utils/createServer";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import { registerHelper } from "../utils/testHelpers";
+import {
+  getTokenFromResponse,
+  loginUser,
+  registerHelper,
+  requestWithAuth,
+} from "../utils/testHelpers";
 
 const app = createServer();
 
@@ -98,20 +103,16 @@ describe("Auth", () => {
       expect(body).toEqual({ msg: "Authentication Invalid!" });
     });
     test("Successful 200", async () => {
-      const user = await supertest(app)
-        .post(`${URL}/auth/login`)
-        .send(registerHelper(1).loginInput)
-        .expect(200);
-      expect(user.get("Set-Cookie")).toBeDefined();
-      const token = user.get("Set-Cookie").toString();
-      const formattedToken = token.split("token=")[1].split(";")[0];
+      const user = await loginUser(app);
+      const token = getTokenFromResponse(user);
 
-      const { status, body } = await supertest(app)
-        .get(`${URL}/auth/getCurrentUser`)
-        .set(
-          "Cookie",
-          `token=${formattedToken}; Path=/; HttpOnly; Secure; SameSite=none`
-        );
+      const { status, body } = await requestWithAuth(
+        app,
+        "get",
+        `${URL}/auth/getCurrentUser`,
+        token
+      );
+
       expect(status).toBe(200);
       expect(body).toEqual(registerHelper(1).registerResult);
     });
@@ -123,20 +124,16 @@ describe("Auth", () => {
       expect(body).toEqual({ msg: "Authentication Invalid!" });
     });
     test("Successful 200", async () => {
-      const user = await supertest(app)
-        .post(`${URL}/auth/login`)
-        .send(registerHelper(1).loginInput)
-        .expect(200);
-      expect(user.get("Set-Cookie")).toBeDefined();
-      const token = user.get("Set-Cookie").toString();
-      const formattedToken = token.split("token=")[1].split(";")[0];
+      const user = await loginUser(app);
+      const token = getTokenFromResponse(user);
 
-      const { status, body } = await supertest(app)
-        .get(`${URL}/auth/logout`)
-        .set(
-          "Cookie",
-          `token=${formattedToken}; Path=/; HttpOnly; Secure; SameSite=none`
-        );
+      const { status, body } = await requestWithAuth(
+        app,
+        "get",
+        `${URL}/auth/logout`,
+        token
+      );
+
       expect(status).toBe(200);
       expect(body).toEqual({ msg: "User logged out!" });
     });

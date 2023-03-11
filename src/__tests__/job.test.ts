@@ -75,8 +75,7 @@ describe("Job", () => {
         app,
         "patch",
         `${URL}/jobs/${randomId}`,
-        token,
-        {}
+        token
       );
 
       expect(status).toBe(400);
@@ -134,8 +133,7 @@ describe("Job", () => {
         app,
         "delete",
         `${URL}/jobs/${randomId}`,
-        token,
-        {}
+        token
       );
 
       expect(status).toBe(404);
@@ -151,8 +149,7 @@ describe("Job", () => {
         app,
         "delete",
         `${URL}/jobs/${jobId}`,
-        token,
-        {}
+        token
       );
 
       expect(status).toBe(200);
@@ -171,8 +168,7 @@ describe("Job", () => {
         app,
         "get",
         `${URL}/jobs/${randomId}`,
-        token,
-        {}
+        token
       );
 
       expect(status).toBe(404);
@@ -188,8 +184,7 @@ describe("Job", () => {
         app,
         "get",
         `${URL}/jobs/${jobId}`,
-        token,
-        {}
+        token
       );
 
       expect(status).toBe(200);
@@ -207,8 +202,7 @@ describe("Job", () => {
         app,
         "get",
         `${URL}/jobs`,
-        token,
-        {}
+        token
       );
 
       expect(status).toBe(200);
@@ -234,8 +228,7 @@ describe("Job", () => {
         app,
         "get",
         `${URL}/jobs/company/${companyId}`,
-        token,
-        {}
+        token
       );
 
       expect(status).toBe(200);
