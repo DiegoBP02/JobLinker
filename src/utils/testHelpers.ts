@@ -62,18 +62,18 @@ const createJobResult = {
   },
 };
 
-function getTokenFromResponse(response: any) {
+const getTokenFromResponse = (response: any) => {
   const token = response.get("Set-Cookie").toString();
   return token.split("token=")[1].split(";")[0];
-}
+};
 
-async function requestWithAuth(
+const requestWithAuth = async (
   app: any,
   method: any,
   path: any,
   token: any,
   data?: any
-) {
+) => {
   //@ts-ignore
   const request = supertest(app)[method](path);
   if (token) {
@@ -86,17 +86,17 @@ async function requestWithAuth(
     request.send(data);
   }
   return request;
-}
+};
 
-async function loginUser(app: any) {
+const loginUser = async (app: any) => {
   const user = await supertest(app)
     .post(`/api/v1/auth/login`)
     .send(registerHelper(1).loginInput);
   expect(user.get("Set-Cookie")).toBeDefined();
   return user;
-}
+};
 
-async function createJobAndGetId(app: any, token: any, createJobInput: any) {
+const createJobAndGetId = async (app: any, token: any, createJobInput: any) => {
   const job = await requestWithAuth(
     app,
     "post",
@@ -105,7 +105,7 @@ async function createJobAndGetId(app: any, token: any, createJobInput: any) {
     createJobInput
   );
   return job.body.job._id;
-}
+};
 
 const createApplicationInput = {
   resume:
@@ -114,6 +114,21 @@ const createApplicationInput = {
 
 const createApplicationResult = {
   application: {
+    resume:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin gravida augue quis magna aliquet, sed viverra quam pharetra. Integer sit amet justo purus. In dapibus mi at dui viverra luctus. Sed convallis dolor et tellus venenatis vestibulum. Sed vel sapien metus. Vestibulum mattis, nisi eget facilisis pulvinar, nunc nulla malesuada nunc, non accumsan mauris metus non ipsum. Ut quis nulla a leo aliquam pretium id vitae metus. Nunc pretium, nunc non tristique malesuada, magna velit facilisis arcu, at tincidunt turpis augue sed sapien.",
+    certifications: [],
+    status: "pending",
+    user: expect.any(String),
+    job: expect.any(String),
+    _id: expect.any(String),
+    createdAt: expect.any(String),
+    updatedAt: expect.any(String),
+    __v: expect.any(Number),
+  },
+};
+
+const updatedApplicationResult = {
+  updatedApplication: {
     resume:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin gravida augue quis magna aliquet, sed viverra quam pharetra. Integer sit amet justo purus. In dapibus mi at dui viverra luctus. Sed convallis dolor et tellus venenatis vestibulum. Sed vel sapien metus. Vestibulum mattis, nisi eget facilisis pulvinar, nunc nulla malesuada nunc, non accumsan mauris metus non ipsum. Ut quis nulla a leo aliquam pretium id vitae metus. Nunc pretium, nunc non tristique malesuada, magna velit facilisis arcu, at tincidunt turpis augue sed sapien.",
     certifications: [],
@@ -141,11 +156,11 @@ const createApplication = async (app: any, token: any, jobId: any) => {
   return application;
 };
 
-async function createJobAndApplication(app: any, token: any) {
+const createJobAndApplication = async (app: any, token: any) => {
   const jobId = await createJobAndGetId(app, token, createJobInput);
   const application = await createApplication(app, token, jobId);
   return { applicationId: application.body.application._id, jobId };
-}
+};
 
 const loginUserAndGetToken = async (app: any) => {
   const user = await loginUser(app);
@@ -155,6 +170,28 @@ const loginUserAndGetToken = async (app: any) => {
 
 const createRandomId = () => {
   return new mongoose.Types.ObjectId().toString();
+};
+
+const singleJobApplicantsResult = {
+  singleJobApplicants: [
+    {
+      __v: expect.any(Number),
+      _id: expect.any(String),
+      certifications: [],
+      createdAt: expect.any(String),
+      job: expect.any(String),
+      resume:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin gravida augue quis magna aliquet, sed viverra quam pharetra. Integer sit amet justo purus. In dapibus mi at dui viverra luctus. Sed convallis dolor et tellus venenatis vestibulum. Sed vel sapien metus. Vestibulum mattis, nisi eget facilisis pulvinar, nunc nulla malesuada nunc, non accumsan mauris metus non ipsum. Ut quis nulla a leo aliquam pretium id vitae metus. Nunc pretium, nunc non tristique malesuada, magna velit facilisis arcu, at tincidunt turpis augue sed sapien.",
+      status: "pending",
+      updatedAt: expect.any(String),
+      user: {
+        _id: expect.any(String),
+        email: "test1@email.com",
+        fullName: "test",
+      },
+    },
+  ],
+  totalCount: 1,
 };
 
 export {
@@ -171,4 +208,6 @@ export {
   createJobAndApplication,
   loginUserAndGetToken,
   createRandomId,
+  singleJobApplicantsResult,
+  updatedApplicationResult,
 };

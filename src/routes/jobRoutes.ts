@@ -29,7 +29,7 @@ router.get("/company/:id", getAllJobsByCompany);
 router.get(
   "/job/:id",
   authenticateUser,
-  authorizePermissions("company"),
+  authorizePermissions("admin", "company"),
   getSingleJobApplicants
 );
 
@@ -42,14 +42,14 @@ router.patch(
 router.patch(
   "/user/:id",
   authenticateUser,
-  authorizePermissions("company"),
+  authorizePermissions("admin", "company"),
   updateUserApplicationStatus
 );
 
 router.delete(
   "/:id",
   authenticateUser,
-  authorizePermissions("company", "admin"),
+  authorizePermissions("admin", "company"),
   deleteJob
 );
 

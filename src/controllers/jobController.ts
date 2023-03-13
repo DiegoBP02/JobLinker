@@ -103,16 +103,16 @@ const getSingleJobApplicants = async (req: Request, res: Response) => {
 
   const job = await Job.findOne({ _id: jobId });
   if (!job) {
-    return res.status(400).json({ msg: `No job with ${jobId} id found!` });
+    return res.status(404).json({ msg: `No job with ${jobId} id found!` });
   }
 
   const singleJobApplicants = await Application.find({ job: jobId }).populate({
     path: "user",
     select: "fullName email",
   });
-  if (!singleJobApplicants) {
+  if (singleJobApplicants.length === 0) {
     return res
-      .status(400)
+      .status(404)
       .json({ msg: `No application for job with ${jobId} id found!` });
   }
 
@@ -135,14 +135,14 @@ const updateUserApplicationStatus = async (req: Request, res: Response) => {
   const application = await Application.findOne({ _id: applicationId });
   if (!application) {
     return res
-      .status(400)
+      .status(404)
       .json({ msg: `No application with ${applicationId} id found!` });
   }
 
   const job = await Job.findOne({ _id: application.job });
   if (!job) {
     return res
-      .status(400)
+      .status(404)
       .json({ msg: `No job with ${application.job} id found!` });
   }
 

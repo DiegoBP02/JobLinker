@@ -6,10 +6,16 @@ import {
   createJobAndGetId,
   createJobInput,
   createJobResult,
+  createRandomId,
   getTokenFromResponse,
   loginUser,
   registerHelper,
   requestWithAuth,
+  loginUserAndGetToken,
+  createJobAndApplication,
+  singleJobApplicantsResult,
+  createApplicationResult,
+  updatedApplicationResult,
 } from "../utils/testHelpers";
 
 const app = createServer();
@@ -64,10 +70,10 @@ describe("Job", () => {
       expect(mongoose.isValidObjectId(body.job._id)).toBeTruthy();
     });
   });
-
   describe("Update Job", () => {
     test("Fields missing 400", async () => {
-      const randomId = new mongoose.Types.ObjectId().toString();
+      const randomId = createRandomId();
+
       const user = await loginUser(app);
       const token = getTokenFromResponse(user);
 
@@ -82,7 +88,7 @@ describe("Job", () => {
       expect(body).toEqual({ msg: "Please provide at least one field!" });
     });
     test("No job found 404", async () => {
-      const randomId = new mongoose.Types.ObjectId().toString();
+      const randomId = createRandomId();
       const user = await loginUser(app);
       const token = getTokenFromResponse(user);
 
@@ -125,7 +131,7 @@ describe("Job", () => {
   });
   describe("Delete job", () => {
     test("No job found 404", async () => {
-      const randomId = new mongoose.Types.ObjectId().toString();
+      const randomId = createRandomId();
       const user = await loginUser(app);
       const token = getTokenFromResponse(user);
 
@@ -158,7 +164,7 @@ describe("Job", () => {
   });
   describe("Get Job", () => {
     test("No job found 404", async () => {
-      const randomId = new mongoose.Types.ObjectId().toString();
+      const randomId = createRandomId();
       const user = await loginUser(app);
       const token = getTokenFromResponse(user);
 
@@ -233,6 +239,128 @@ describe("Job", () => {
 
       expect(status).toBe(200);
       expect(body.totalCount).toBe(6); // depends on the previous tests
+    });
+  });
+  describe("Get Single Job Applicants", () => {
+    test("No job found 404", async () => {
+      const randomId = createRandomId();
+      const token = await loginUserAndGetToken(app);
+
+      const { status, body } = await requestWithAuth(
+        app,
+        "get",
+        `${URL}/jobs/job/${randomId}`,
+        token
+      );
+
+      expect(status).toBe(404);
+      expect(body).toEqual({ msg: `No job with ${randomId} id found!` });
+    });
+    test("No application found 404", async () => {
+      const token = await loginUserAndGetToken(app);
+      const jobId = await createJobAndGetId(app, token, createJobInput);
+
+      const { status, body } = await requestWithAuth(
+        app,
+        "get",
+        `${URL}/jobs/job/${jobId}`,
+        token
+      );
+
+      expect(status).toBe(404);
+      expect(body).toEqual({
+        msg: `No application for job with ${jobId} id found!`,
+      });
+    });
+    test("Successful 200", async () => {
+      const token = await loginUserAndGetToken(app);
+      const { jobId } = await createJobAndApplication(app, token);
+
+      const { status, body } = await requestWithAuth(
+        app,
+        "get",
+        `${URL}/jobs/job/${jobId}`,
+        token
+      );
+
+      expect(status).toBe(200);
+      expect(body).toEqual(singleJobApplicantsResult);
+    });
+  });
+  describe("Update User Application Status", () => {
+    test("Status missing 400", async () => {
+      const randomId = createRandomId();
+      const token = await loginUserAndGetToken(app);
+
+      const { status, body } = await requestWithAuth(
+        app,
+        "patch",
+        `${URL}/jobs/user/${randomId}`,
+        token,
+        { status: "analysis" }
+      );
+
+      expect(status).toBe(404);
+      expect(body).toEqual({
+        msg: `No application with ${randomId} id found!`,
+      });
+    });
+    test("Application not found 404", async () => {
+      const randomId = createRandomId();
+      const token = await loginUserAndGetToken(app);
+
+      const { status, body } = await requestWithAuth(
+        app,
+        "patch",
+        `${URL}/jobs/user/${randomId}`,
+        token
+      );
+
+      expect(status).toBe(400);
+      expect(body).toEqual({ msg: "Please provide status!" });
+    });
+    test("Job not found 404", async () => {
+      const token = await loginUserAndGetToken(app);
+      const { jobId, applicationId } = await createJobAndApplication(
+        app,
+        token
+      );
+      await requestWithAuth(app, "delete", `${URL}/jobs/${jobId}`, token);
+
+      const { status, body } = await requestWithAuth(
+        app,
+        "patch",
+        `${URL}/jobs/user/${applicationId}`,
+        token,
+        { status: "analysis" }
+      );
+
+      expect(status).toBe(404);
+      expect(body).toEqual({
+        msg: `No job with ${jobId} id found!`,
+      });
+    });
+  });
+  test("Successful 200", async () => {
+    const token = await loginUserAndGetToken(app);
+    const { applicationId } = await createJobAndApplication(app, token);
+
+    const { status, body } = await requestWithAuth(
+      app,
+      "patch",
+      `${URL}/jobs/user/${applicationId}`,
+      token,
+      { status: "analyzed" }
+    );
+
+    console.log(body.updatedApplication);
+    expect(status).toBe(200);
+    expect(body).toEqual({
+      ...updatedApplicationResult,
+      updatedApplication: {
+        ...updatedApplicationResult.updatedApplication,
+        status: "analyzed",
+      },
     });
   });
 });
