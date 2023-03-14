@@ -14,7 +14,6 @@ import {
   loginUserAndGetToken,
   createJobAndApplication,
   singleJobApplicantsResult,
-  createApplicationResult,
   updatedApplicationResult,
 } from "../utils/testHelpers";
 
@@ -53,8 +52,7 @@ describe("Job", () => {
     });
 
     test("Successful 201", async () => {
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      const token = await loginUserAndGetToken(app);
 
       const { status, body } = await requestWithAuth(
         app,
@@ -89,8 +87,7 @@ describe("Job", () => {
     });
     test("No job found 404", async () => {
       const randomId = createRandomId();
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      const token = await loginUserAndGetToken(app);
 
       const { status, body } = await requestWithAuth(
         app,
@@ -149,7 +146,10 @@ describe("Job", () => {
       const user = await loginUser(app);
       const token = getTokenFromResponse(user);
 
-      const jobId = await createJobAndGetId(app, token, createJobInput);
+      const { applicationId, jobId } = await createJobAndApplication(
+        app,
+        token
+      );
 
       const { status, body } = await requestWithAuth(
         app,
@@ -158,6 +158,18 @@ describe("Job", () => {
         token
       );
 
+      const { status: applicationStatus, body: applicationBody } =
+        await requestWithAuth(
+          app,
+          "get",
+          `${URL}/application/${applicationId}`,
+          token
+        );
+
+      expect(applicationStatus).toBe(404);
+      expect(applicationBody).toEqual({
+        msg: `No application with ${applicationId} id found!`,
+      });
       expect(status).toBe(200);
       expect(body).toEqual({ msg: "Job deleted successfully!" });
     });
@@ -223,7 +235,7 @@ describe("Job", () => {
       const job = await requestWithAuth(
         app,
         "post",
-        `/api/v1/jobs`,
+        `${URL}/jobs`,
         token,
         createJobInput
       );
@@ -319,27 +331,6 @@ describe("Job", () => {
       expect(status).toBe(400);
       expect(body).toEqual({ msg: "Please provide status!" });
     });
-    test("Job not found 404", async () => {
-      const token = await loginUserAndGetToken(app);
-      const { jobId, applicationId } = await createJobAndApplication(
-        app,
-        token
-      );
-      await requestWithAuth(app, "delete", `${URL}/jobs/${jobId}`, token);
-
-      const { status, body } = await requestWithAuth(
-        app,
-        "patch",
-        `${URL}/jobs/user/${applicationId}`,
-        token,
-        { status: "analysis" }
-      );
-
-      expect(status).toBe(404);
-      expect(body).toEqual({
-        msg: `No job with ${jobId} id found!`,
-      });
-    });
   });
   test("Successful 200", async () => {
     const token = await loginUserAndGetToken(app);
@@ -353,7 +344,6 @@ describe("Job", () => {
       { status: "analyzed" }
     );
 
-    console.log(body.updatedApplication);
     expect(status).toBe(200);
     expect(body).toEqual({
       ...updatedApplicationResult,

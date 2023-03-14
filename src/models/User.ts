@@ -54,6 +54,18 @@ const UserSchema: mongoose.Schema<UserDocument> = new mongoose.Schema(
   { timestamps: true }
 );
 
+UserSchema.virtual("jobs", {
+  ref: "Job",
+  localField: "_id",
+  foreignField: "companyId",
+  justOne: false,
+});
+
+UserSchema.pre("remove", async function () {
+  // @ts-ignore
+  await this.model("Job").deleteMany({ companyId: this._id });
+});
+
 UserSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import supertest from "supertest";
+import supertest, { Response } from "supertest";
+import { Express } from "express";
 
 const registerHelper = (n: number) => {
   const registerInput = {
@@ -28,11 +29,24 @@ const registerHelper = (n: number) => {
     },
   };
 
+  const getSingleUserResult = {
+    user: {
+      _id: expect.any(String),
+      fullName: "test",
+      email: `test${n}@email.com`,
+      role: "user",
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+      __v: expect.any(Number),
+    },
+  };
+
   return {
     registerInput,
     companyRegisterInput,
     loginInput,
     registerResult,
+    getSingleUserResult,
   };
 };
 
@@ -62,19 +76,18 @@ const createJobResult = {
   },
 };
 
-const getTokenFromResponse = (response: any) => {
+const getTokenFromResponse = (response: Response) => {
   const token = response.get("Set-Cookie").toString();
   return token.split("token=")[1].split(";")[0];
 };
 
 const requestWithAuth = async (
-  app: any,
-  method: any,
-  path: any,
-  token: any,
-  data?: any
+  app: Express,
+  method: "get" | "post" | "patch" | "delete",
+  path: string,
+  token?: string,
+  data?: object
 ) => {
-  //@ts-ignore
   const request = supertest(app)[method](path);
   if (token) {
     request.set(
@@ -88,7 +101,7 @@ const requestWithAuth = async (
   return request;
 };
 
-const loginUser = async (app: any) => {
+const loginUser = async (app: Express) => {
   const user = await supertest(app)
     .post(`/api/v1/auth/login`)
     .send(registerHelper(1).loginInput);
@@ -96,7 +109,11 @@ const loginUser = async (app: any) => {
   return user;
 };
 
-const createJobAndGetId = async (app: any, token: any, createJobInput: any) => {
+const createJobAndGetId = async (
+  app: Express,
+  token: string,
+  createJobInput: object
+) => {
   const job = await requestWithAuth(
     app,
     "post",
@@ -142,7 +159,11 @@ const updatedApplicationResult = {
   },
 };
 
-const createApplication = async (app: any, token: any, jobId: any) => {
+const createApplication = async (
+  app: Express,
+  token: string,
+  jobId: string
+) => {
   const application = await requestWithAuth(
     app,
     "post",
@@ -156,13 +177,13 @@ const createApplication = async (app: any, token: any, jobId: any) => {
   return application;
 };
 
-const createJobAndApplication = async (app: any, token: any) => {
+const createJobAndApplication = async (app: Express, token: string) => {
   const jobId = await createJobAndGetId(app, token, createJobInput);
   const application = await createApplication(app, token, jobId);
   return { applicationId: application.body.application._id, jobId };
 };
 
-const loginUserAndGetToken = async (app: any) => {
+const loginUserAndGetToken = async (app: Express) => {
   const user = await loginUser(app);
   const token = getTokenFromResponse(user);
   return token;
@@ -194,6 +215,18 @@ const singleJobApplicantsResult = {
   totalCount: 1,
 };
 
+const getAllUsersResult = {
+  users: [
+    {
+      _id: expect.any(String),
+      fullName: "test",
+      email: "test2@email.com",
+      role: "user",
+    },
+  ],
+  totalCount: 1,
+};
+
 export {
   registerHelper,
   getTokenFromResponse,
@@ -210,4 +243,5 @@ export {
   createRandomId,
   singleJobApplicantsResult,
   updatedApplicationResult,
+  getAllUsersResult,
 };

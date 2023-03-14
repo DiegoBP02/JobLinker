@@ -62,15 +62,20 @@ const updateJob = async (req: Request, res: Response) => {
 const deleteJob = async (req: Request, res: Response) => {
   const { id: jobId } = req.params;
 
-  const job = (await Job.findOne({ _id: jobId })) as JobDocument;
+  const job = await Job.findOne({ _id: jobId });
   if (!job) {
     return res.status(404).json({ msg: `No job found with id '${jobId}'!` });
   }
 
   // @ts-ignore
-  checkPermission(res, req.user, job.companyId);
+  if (req.user.role !== "admin") {
+    // @ts-ignore
+    checkPermission(res, req.user, job.companyId);
+  }
 
+  await Application.deleteMany({ job: jobId }).exec();
   await Job.deleteOne({ _id: jobId }).exec();
+
   return res.status(200).json({ msg: "Job deleted successfully!" });
 };
 
@@ -140,11 +145,6 @@ const updateUserApplicationStatus = async (req: Request, res: Response) => {
   }
 
   const job = await Job.findOne({ _id: application.job });
-  if (!job) {
-    return res
-      .status(404)
-      .json({ msg: `No job with ${application.job} id found!` });
-  }
 
   // @ts-ignore
   checkPermission(res, req.user, job.companyId);

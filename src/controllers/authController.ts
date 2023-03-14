@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { Application } from "../models/Application";
+import { Job } from "../models/Job";
 import { User, UserDocument, UserInput } from "../models/User";
 import createTokenUser from "../utils/createTokenUser";
 import { attachCookiesToResponse } from "../utils/jwt";
@@ -72,4 +74,51 @@ const logout = async (req: Request, res: Response) => {
   return res.status(200).json({ msg: "User logged out!" });
 };
 
-export { register, login, logout, getCurrentUser };
+const getAllUsers = async (req: Request, res: Response) => {
+  const users = await User.find({ role: { $ne: "admin" } }).select(
+    "-password -createdAt -updatedAt -__v"
+  );
+  return res.status(200).json({ users, totalCount: users.length });
+};
+
+const getSingleUser = async (req: Request, res: Response) => {
+  const { id: userId } = req.params;
+
+  const user = await User.findOne({ _id: userId }).select("-password");
+  if (!user) {
+    return res.status(404).json({ msg: `No user with ${userId} id!` });
+  }
+
+  return res.status(200).json({ user });
+};
+
+const deleteUser = async (req: Request, res: Response) => {
+  const { id: userId } = req.params;
+
+  const user = await User.findOne({ _id: userId });
+  if (!user) {
+    return res.status(404).json({ msg: `No user with ${userId} id!` });
+  }
+  if (user.role === "admin") {
+    return res.status(401).json({ msg: "Unauthorized to access this route!" });
+  }
+
+  const jobs = await Job.find({ companyId: userId }).select("_id");
+  const jobIds = jobs.map((job) => job._id);
+  await Application.deleteMany({ job: { $in: jobIds } }).exec();
+
+  await Job.deleteMany({ companyId: userId }).exec();
+  await User.deleteOne({ _id: userId }).exec();
+
+  return res.status(200).json({ msg: "User deleted successfuly!" });
+};
+
+export {
+  register,
+  login,
+  logout,
+  getCurrentUser,
+  getAllUsers,
+  getSingleUser,
+  deleteUser,
+};
