@@ -15,6 +15,7 @@ import {
   createJobAndApplication,
   singleJobApplicantsResult,
   updatedApplicationResult,
+  createJobInput2,
 } from "../utils/testHelpers";
 
 const app = createServer();
@@ -211,10 +212,14 @@ describe("Job", () => {
   });
   describe("Get All jobs", () => {
     test("Successful 200", async () => {
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      // depends on the previous tests
+      const company = await supertest(app)
+        .post(`${URL}/auth/register`)
+        .send(registerHelper(6).companyRegisterInput);
+      const token = getTokenFromResponse(company);
 
       await createJobAndGetId(app, token, createJobInput);
+      await requestWithAuth(app, "post", `${URL}/jobs`, token, createJobInput2);
 
       const { status, body } = await requestWithAuth(
         app,
@@ -224,13 +229,46 @@ describe("Job", () => {
       );
 
       expect(status).toBe(200);
-      expect(body.totalCount).toBe(5); // depends on the previous tests
+      expect(body.totalJobs).toBe(6);
+      expect(body.numOfPages).toBe(1);
+
+      const jobSearch = await requestWithAuth(
+        app,
+        "get",
+        `${URL}/jobs?search=frontend%20engineer`,
+        token
+      );
+
+      expect(jobSearch.status).toBe(200);
+      expect(jobSearch.body.jobs[0].position).toEqual("Frontend Engineer");
+
+      const jobSort = await requestWithAuth(
+        app,
+        "get",
+        `${URL}/jobs?sort=ascending`,
+        token
+      );
+
+      expect(jobSort.status).toBe(200);
+      expect(jobSort.body.jobs[0].salary).toBe(100000);
+
+      const jobType = await requestWithAuth(
+        app,
+        "get",
+        `${URL}/jobs?type=part-time`,
+        token
+      );
+
+      expect(jobSort.status).toBe(200);
+      expect(jobSort.body.jobs[0].type).toEqual("part-time");
     });
   });
   describe("Get All Jobs By Company", () => {
     test("Successful 200", async () => {
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      const company = await supertest(app)
+        .post(`${URL}/auth/register`)
+        .send(registerHelper(7).companyRegisterInput);
+      const token = getTokenFromResponse(company);
 
       const job = await requestWithAuth(
         app,
@@ -250,7 +288,7 @@ describe("Job", () => {
       );
 
       expect(status).toBe(200);
-      expect(body.totalCount).toBe(6); // depends on the previous tests
+      expect(body.totalCount).toBe(1);
     });
   });
   describe("Get Single Job Applicants", () => {

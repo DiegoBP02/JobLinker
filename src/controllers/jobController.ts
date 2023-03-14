@@ -91,9 +91,52 @@ const getJob = async (req: Request, res: Response) => {
 };
 
 const getAllJobs = async (req: Request, res: Response) => {
-  const jobs = await Job.find();
+  const { search, type, sort } = req.query;
 
-  return res.status(200).json({ jobs, totalCount: jobs.length });
+  const queryObject = {};
+
+  if (search) {
+    // @ts-ignore
+    queryObject.position = { $regex: search, $options: "i" };
+  }
+  if (type && type !== "all") {
+    // @ts-ignore
+    queryObject.type = type;
+  }
+
+  let result = Job.find(queryObject);
+
+  if (sort === "latest") {
+    result = result.sort("-createdAt");
+  }
+  if (sort === "oldest") {
+    result = result.sort("createdAt");
+  }
+  if (sort === "a-z") {
+    result = result.sort("position");
+  }
+  if (sort === "z-a") {
+    result = result.sort("-position");
+  }
+  if (sort === "ascending") {
+    result = result.sort("salary");
+  }
+  if (sort === "descending") {
+    result = result.sort("-salary");
+  }
+
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  result = result.skip(skip).limit(limit);
+
+  const jobs = await result;
+
+  const totalJobs = await Job.countDocuments(queryObject);
+  const numOfPages = Math.ceil(totalJobs / limit);
+
+  return res.status(200).json({ jobs, totalJobs, numOfPages });
 };
 
 const getAllJobsByCompany = async (req: Request, res: Response) => {

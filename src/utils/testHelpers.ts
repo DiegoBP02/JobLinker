@@ -59,6 +59,15 @@ const createJobInput = {
   type: "full-time",
 };
 
+const createJobInput2 = {
+  position: "Frontend Engineer",
+  description:
+    "We're seeking a frontend engineer to join our team and help develop engaging and user-friendly applications for our clients. This individual should have experience with modern frontend frameworks such as React or Angular, as well as proficiency in HTML, CSS, and JavaScript.",
+  location: "San Francisco, CA",
+  salary: 100000,
+  type: "part-time",
+};
+
 const createJobResult = {
   job: {
     __v: expect.any(Number),
@@ -244,4 +253,5 @@ export {
   singleJobApplicantsResult,
   updatedApplicationResult,
   getAllUsersResult,
+  createJobInput2,
 };
