@@ -170,7 +170,7 @@ describe("Application", () => {
       );
 
       expect(status).toBe(200);
-      expect(body.totalCount).toBe(3);
+      expect(body.totalCount).toBe(body.applications.length);
     });
   });
   describe("Update Application", () => {

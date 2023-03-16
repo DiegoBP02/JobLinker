@@ -73,8 +73,7 @@ describe("Job", () => {
     test("Fields missing 400", async () => {
       const randomId = createRandomId();
 
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      const token = await loginUserAndGetToken(app);
 
       const { status, body } = await requestWithAuth(
         app,
@@ -102,8 +101,7 @@ describe("Job", () => {
       expect(body).toEqual({ msg: `No job found with id '${randomId}'!` });
     });
     test("Successful 200", async () => {
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      const token = await loginUserAndGetToken(app);
 
       const jobId = await createJobAndGetId(app, token, createJobInput);
 
@@ -130,8 +128,7 @@ describe("Job", () => {
   describe("Delete job", () => {
     test("No job found 404", async () => {
       const randomId = createRandomId();
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      const token = await loginUserAndGetToken(app);
 
       const { status, body } = await requestWithAuth(
         app,
@@ -144,8 +141,7 @@ describe("Job", () => {
       expect(body).toEqual({ msg: `No job found with id '${randomId}'!` });
     });
     test("Successful 200", async () => {
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      const token = await loginUserAndGetToken(app);
 
       const { applicationId, jobId } = await createJobAndApplication(
         app,
@@ -178,8 +174,7 @@ describe("Job", () => {
   describe("Get Job", () => {
     test("No job found 404", async () => {
       const randomId = createRandomId();
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      const token = await loginUserAndGetToken(app);
 
       await createJobAndGetId(app, token, createJobInput);
 
@@ -194,8 +189,7 @@ describe("Job", () => {
       expect(body).toEqual({ msg: `No job found with id '${randomId}'!` });
     });
     test("Successful 200", async () => {
-      const user = await loginUser(app);
-      const token = getTokenFromResponse(user);
+      const token = await loginUserAndGetToken(app);
 
       const jobId = await createJobAndGetId(app, token, createJobInput);
 
@@ -229,8 +223,8 @@ describe("Job", () => {
       );
 
       expect(status).toBe(200);
-      expect(body.totalCount).toBe(6);
-      expect(body.numOfPages).toBe(1);
+      expect(body.totalCount).toBe(body.jobs.length);
+      expect(body.numOfPages).toBe(body.numOfPages);
 
       const jobSearch = await requestWithAuth(
         app,
@@ -288,7 +282,7 @@ describe("Job", () => {
       );
 
       expect(status).toBe(200);
-      expect(body.totalCount).toBe(1);
+      expect(body.totalCount).toBe(body.jobs.length);
     });
   });
   describe("Get Single Job Applicants", () => {

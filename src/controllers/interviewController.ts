@@ -26,7 +26,7 @@ const createInterview = async (
 
   const checkJob = await Job.findOne({ _id: job });
   if (!checkJob) {
-    return res.status(400).json({ msg: `No job with ${job} id found!` });
+    return res.status(404).json({ msg: `No job with ${job} id found!` });
   }
   const jobId = checkJob._id;
 
@@ -35,7 +35,7 @@ const createInterview = async (
 
   const checkUser = await User.findOne({ _id: user });
   if (!checkUser) {
-    return res.status(400).json({ msg: `No user with ${user} id found!` });
+    return res.status(404).json({ msg: `No user with ${user} id found!` });
   }
 
   if (checkUser.role !== "user") {
@@ -150,7 +150,7 @@ const updateInterview = async (req: Request, res: Response) => {
 
   const interview = await Interview.findOne({ _id: id });
   if (!interview) {
-    return res.status(400).json({ msg: `No interview found with ${id} id!` });
+    return res.status(404).json({ msg: `No interview found with ${id} id!` });
   }
 
   // @ts-ignore
@@ -193,7 +193,7 @@ const updateInterviewStatus = async (req: Request, res: Response) => {
 
   const interview = await Interview.findOne({ _id: id });
   if (!interview) {
-    return res.status(400).json({ msg: `No interview found with ${id} id!` });
+    return res.status(404).json({ msg: `No interview found with ${id} id!` });
   }
 
   // @ts-ignore
@@ -216,7 +216,7 @@ const deleteInterview = async (req: Request, res: Response) => {
 
   const interview = await Interview.findOne({ _id: id });
   if (!interview) {
-    return res.status(400).json({ msg: `No interview found with ${id} id!` });
+    return res.status(404).json({ msg: `No interview found with ${id} id!` });
   }
 
   // @ts-ignore

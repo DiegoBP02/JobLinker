@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import supertest, { Response } from "supertest";
 import { Express } from "express";
+import moment from "moment";
 
 const registerHelper = (n: number) => {
   const registerInput = {
@@ -110,10 +111,10 @@ const requestWithAuth = async (
   return request;
 };
 
-const loginUser = async (app: Express) => {
+const loginUser = async (app: Express, userNumber: number) => {
   const user = await supertest(app)
     .post(`/api/v1/auth/login`)
-    .send(registerHelper(1).loginInput);
+    .send(registerHelper(userNumber).loginInput);
   expect(user.get("Set-Cookie")).toBeDefined();
   return user;
 };
@@ -122,7 +123,7 @@ const createJobAndGetId = async (
   app: Express,
   token: string,
   createJobInput: object
-) => {
+): Promise<string> => {
   const job = await requestWithAuth(
     app,
     "post",
@@ -193,7 +194,7 @@ const createJobAndApplication = async (app: Express, token: string) => {
 };
 
 const loginUserAndGetToken = async (app: Express) => {
-  const user = await loginUser(app);
+  const user = await loginUser(app, 1);
   const token = getTokenFromResponse(user);
   return token;
 };
@@ -236,6 +237,148 @@ const getAllUsersResult = {
   totalCount: 1,
 };
 
+const createInterviewInput = {
+  message:
+    "Dear Candidate, we are pleased to invite you for an interview on Thursday, March 24th at 2:00pm. The interview will be held at our headquarters located at 123 Main St. Please let us know if this time and location work for you. We look forward to meeting with you.",
+  date: moment().add(5, "days").startOf("day").add(8, "hours").toISOString(),
+};
+
+const updateInterviewInput = {
+  message:
+    "Dear Candidate, we are pleased to invite you for an interview on Thursday, March 24th at 2:00pm. The interview will be held at our headquarters located at 123 Main St. Please let us know if this time and location work for you. We look forward to meeting with you.",
+  date: moment().add(8, "days").startOf("day").add(8, "hours").toISOString(),
+};
+
+const registerUser = async (app: Express, userNumber: number) => {
+  const user = await supertest(app)
+    .post(`/api/v1/auth/register`)
+    .send(registerHelper(userNumber).registerInput);
+
+  return user;
+};
+
+const registerCompany = async (app: Express, userNumber: number) => {
+  const user = await supertest(app)
+    .post(`/api/v1/auth/register`)
+    .send(registerHelper(userNumber).companyRegisterInput);
+
+  return user;
+};
+
+const createJobAndUserApplication = async (
+  app: Express,
+  userNumber: number
+) => {
+  const token = await loginUserAndGetToken(app);
+  const jobId = await createJobAndGetId(app, token, createJobInput);
+
+  const user = await registerUser(app, userNumber);
+  const tokenUser = getTokenFromResponse(user);
+  await createApplication(app, tokenUser, jobId);
+
+  return { jobId, userId: user.body.tokenUser.userId };
+};
+
+const createInterview = async (
+  app: Express,
+  token: string,
+  jobId: string,
+  userId: string,
+  date?: string
+) => {
+  const interviewData = {
+    ...createInterviewInput,
+    job: jobId,
+    user: userId,
+  };
+
+  if (date) {
+    interviewData.date = date;
+  }
+
+  const interview = await requestWithAuth(
+    app,
+    "post",
+    `/api/v1/interview`,
+    token,
+    interviewData
+  );
+
+  return { interviewId: interview.body.interview._id };
+};
+
+const createInterviewResult = {
+  interview: {
+    __v: expect.any(Number),
+    _id: expect.any(String),
+    companyId: expect.any(String),
+    createdAt: expect.any(String),
+    date: expect.any(String),
+    job: expect.any(String),
+    message:
+      "Dear Candidate, we are pleased to invite you for an interview on Thursday, March 24th at 2:00pm. The interview will be held at our headquarters located at 123 Main St. Please let us know if this time and location work for you. We look forward to meeting with you.",
+    position: "Software Engineer",
+    status: "pending",
+    updatedAt: expect.any(String),
+    user: expect.any(String),
+  },
+};
+
+const generateUniqueNumber = () => {
+  const timestamp = new Date().getTime();
+  const randomNumber = Math.floor(Math.random() * 1000);
+  const uniqueNumber = parseInt(timestamp.toString() + randomNumber.toString());
+  return uniqueNumber;
+};
+
+const createJobApplicationAndInterview = async (app: Express) => {
+  const randomNumber = generateUniqueNumber();
+  const tokenAdmin = await loginUserAndGetToken(app);
+  const jobId = await createJobAndGetId(app, tokenAdmin, createJobInput);
+
+  const user = await registerUser(app, randomNumber);
+  const tokenUser = getTokenFromResponse(user);
+  await createApplication(app, tokenUser, jobId);
+  const userId = user.body.tokenUser.userId;
+
+  const loginTokenAdmin = await loginUserAndGetToken(app);
+  const { interviewId } = await createInterview(
+    app,
+    loginTokenAdmin,
+    jobId,
+    userId
+  );
+
+  return { interviewId, randomNumber };
+};
+
+const getInterviewResult = {
+  interview: {
+    __v: expect.any(Number),
+    _id: expect.any(String),
+    companyId: {
+      _id: expect.any(String),
+      email: "test1@email.com",
+      fullName: "test",
+    },
+    createdAt: expect.any(String),
+    date: expect.any(String),
+    job: {
+      _id: expect.any(String),
+      location: "San Francisco, CA",
+      position: "Software Engineer",
+      salary: 120000,
+      type: "full-time",
+    },
+    message:
+      "Dear Candidate, we are pleased to invite you for an interview on Thursday, March 24th at 2:00pm. The interview will be held at our headquarters located at 123 Main St. Please let us know if this time and location work for you. We look forward to meeting with you.",
+    position: "Software Engineer",
+    status: "pending",
+    updatedAt: expect.any(String),
+    user: expect.any(String),
+  },
+};
+
 export {
   registerHelper,
   getTokenFromResponse,
@@ -254,4 +397,14 @@ export {
   updatedApplicationResult,
   getAllUsersResult,
   createJobInput2,
+  createInterviewInput,
+  createInterview,
+  createJobAndUserApplication,
+  registerCompany,
+  registerUser,
+  createInterviewResult,
+  generateUniqueNumber,
+  createJobApplicationAndInterview,
+  getInterviewResult,
+  updateInterviewInput,
 };
