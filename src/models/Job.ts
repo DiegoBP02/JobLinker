@@ -72,6 +72,11 @@ JobSchema.pre("remove", async function () {
   await this.model("Application").deleteMany({ job: this._id });
 });
 
+JobSchema.pre("remove", async function () {
+  // @ts-ignore
+  await this.model("Interview").deleteMany({ job: this._id });
+});
+
 const Job: Model<JobDocument> = mongoose.model<JobDocument>("Job", JobSchema);
 
 export { Job, JobDocument, JobInput };

@@ -61,6 +61,13 @@ UserSchema.virtual("jobs", {
   justOne: false,
 });
 
+UserSchema.virtual("interviews", {
+  ref: "Interview",
+  localField: "_id",
+  foreignField: "user",
+  justOne: false,
+});
+
 UserSchema.pre("remove", async function () {
   // @ts-ignore
   await this.model("Job").deleteMany({ companyId: this._id });

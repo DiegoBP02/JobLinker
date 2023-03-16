@@ -229,7 +229,7 @@ describe("Job", () => {
       );
 
       expect(status).toBe(200);
-      expect(body.totalJobs).toBe(6);
+      expect(body.totalCount).toBe(6);
       expect(body.numOfPages).toBe(1);
 
       const jobSearch = await requestWithAuth(
@@ -259,8 +259,8 @@ describe("Job", () => {
         token
       );
 
-      expect(jobSort.status).toBe(200);
-      expect(jobSort.body.jobs[0].type).toEqual("part-time");
+      expect(jobType.status).toBe(200);
+      expect(jobType.body.jobs[0].type).toEqual("part-time");
     });
   });
   describe("Get All Jobs By Company", () => {
