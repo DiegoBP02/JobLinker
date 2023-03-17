@@ -2,30 +2,35 @@ import mongoose from "mongoose";
 import createServer from "../utils/createServer";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import {
-  createJobAndGetId,
-  createJobInput,
+  URL,
+  generateUniqueNumber,
+  createRandomId,
+  createJobAndUserApplication,
+  createJobApplicationAndInterview,
+} from "../utils/testHelpers/integrationHelper";
+import {
   getTokenFromResponse,
   loginUser,
-  requestWithAuth,
-  createApplication,
   loginUserAndGetToken,
-  createRandomId,
-  createInterview,
-  createInterviewInput,
-  createJobAndUserApplication,
   registerCompany,
   registerUser,
-  createInterviewResult,
-  createJobApplicationAndInterview,
-  getInterviewResult,
-  generateUniqueNumber,
-  updateInterviewInput,
-} from "../utils/testHelpers";
+  requestWithAuth,
+} from "../utils/testHelpers/authenticateHelper";
+import {
+  createJobAndGetId,
+  createJobInput,
+} from "../utils/testHelpers/jobHelper";
+import { createApplication } from "../utils/testHelpers/applicationHelper";
 import moment from "moment";
+import {
+  createInterview,
+  createInterviewInput,
+  createInterviewResult,
+  getInterviewResult,
+  updateInterviewInput,
+} from "../utils/testHelpers/interviewHelper";
 
 const app = createServer();
-
-const URL = "/api/v1";
 
 describe("Interview", () => {
   beforeAll(async () => {

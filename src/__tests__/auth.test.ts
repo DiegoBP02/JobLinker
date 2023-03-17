@@ -3,22 +3,23 @@ import supertest from "supertest";
 import createServer from "../utils/createServer";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import {
-  createJobAndApplication,
-  createJobAndGetId,
-  createJobInput,
+  URL,
   createRandomId,
   getAllUsersResult,
+} from "../utils/testHelpers/integrationHelper";
+import {
   getTokenFromResponse,
-  loginUser,
   loginUserAndGetToken,
   registerHelper,
   requestWithAuth,
-  createApplication,
-} from "../utils/testHelpers";
+} from "../utils/testHelpers/authenticateHelper";
+import {
+  createJobAndGetId,
+  createJobInput,
+} from "../utils/testHelpers/jobHelper";
+import { createApplication } from "../utils/testHelpers/applicationHelper";
 
 const app = createServer();
-
-const URL = "/api/v1";
 
 describe("Auth", () => {
   beforeAll(async () => {

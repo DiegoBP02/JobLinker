@@ -2,25 +2,32 @@ import mongoose from "mongoose";
 import supertest from "supertest";
 import createServer from "../utils/createServer";
 import { MongoMemoryServer } from "mongodb-memory-server";
+
+import {
+  URL,
+  generateUniqueNumber,
+  createRandomId,
+  createJobAndApplication,
+} from "../utils/testHelpers/integrationHelper";
+import {
+  getTokenFromResponse,
+  loginUserAndGetToken,
+  registerCompany,
+  registerHelper,
+  requestWithAuth,
+} from "../utils/testHelpers/authenticateHelper";
 import {
   createJobAndGetId,
   createJobInput,
+  createJobInput2,
   createJobResult,
-  createRandomId,
-  getTokenFromResponse,
-  loginUser,
-  registerHelper,
-  requestWithAuth,
-  loginUserAndGetToken,
-  createJobAndApplication,
+} from "../utils/testHelpers/jobHelper";
+import {
   singleJobApplicantsResult,
   updatedApplicationResult,
-  createJobInput2,
-} from "../utils/testHelpers";
+} from "../utils/testHelpers/applicationHelper";
 
 const app = createServer();
-
-const URL = "/api/v1";
 
 describe("Job", () => {
   beforeAll(async () => {
@@ -206,10 +213,8 @@ describe("Job", () => {
   });
   describe("Get All jobs", () => {
     test("Successful 200", async () => {
-      // depends on the previous tests
-      const company = await supertest(app)
-        .post(`${URL}/auth/register`)
-        .send(registerHelper(6).companyRegisterInput);
+      const randomNumber = generateUniqueNumber();
+      const company = await registerCompany(app, randomNumber);
       const token = getTokenFromResponse(company);
 
       await createJobAndGetId(app, token, createJobInput);
@@ -259,9 +264,8 @@ describe("Job", () => {
   });
   describe("Get All Jobs By Company", () => {
     test("Successful 200", async () => {
-      const company = await supertest(app)
-        .post(`${URL}/auth/register`)
-        .send(registerHelper(7).companyRegisterInput);
+      const randomNumber = generateUniqueNumber();
+      const company = await registerCompany(app, randomNumber);
       const token = getTokenFromResponse(company);
 
       const job = await requestWithAuth(

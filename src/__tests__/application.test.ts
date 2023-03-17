@@ -1,25 +1,30 @@
 import mongoose from "mongoose";
-import supertest from "supertest";
 import createServer from "../utils/createServer";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import {
-  createApplicationInput,
-  createApplicationResult,
-  createJobAndGetId,
-  createJobInput,
-  getTokenFromResponse,
-  loginUser,
-  registerHelper,
-  requestWithAuth,
-  createApplication,
-  loginUserAndGetToken,
+  URL,
+  generateUniqueNumber,
   createRandomId,
   createJobAndApplication,
-} from "../utils/testHelpers";
+} from "../utils/testHelpers/integrationHelper";
+import {
+  getTokenFromResponse,
+  loginUserAndGetToken,
+  registerCompany,
+  registerUser,
+  requestWithAuth,
+} from "../utils/testHelpers/authenticateHelper";
+import {
+  createJobAndGetId,
+  createJobInput,
+} from "../utils/testHelpers/jobHelper";
+import {
+  createApplication,
+  createApplicationInput,
+  createApplicationResult,
+} from "../utils/testHelpers/applicationHelper";
 
 const app = createServer();
-
-const URL = "/api/v1";
 
 describe("Application", () => {
   beforeAll(async () => {
@@ -34,9 +39,7 @@ describe("Application", () => {
 
   describe("Create Application", () => {
     test("Fields missing 400", async () => {
-      const user = await supertest(app)
-        .post(`${URL}/auth/register`)
-        .send(registerHelper(1).companyRegisterInput);
+      const user = await registerUser(app, 1);
       const token = getTokenFromResponse(user);
 
       const { status, body } = await requestWithAuth(
@@ -142,9 +145,9 @@ describe("Application", () => {
   });
   describe("Get All Applications", () => {
     test("No application found 404", async () => {
-      const user = await supertest(app)
-        .post(`${URL}/auth/register`)
-        .send(registerHelper(2).companyRegisterInput);
+      const randomNumber = generateUniqueNumber();
+      const user = await registerCompany(app, randomNumber);
+
       const token = getTokenFromResponse(user);
 
       const { status, body } = await requestWithAuth(
@@ -227,9 +230,9 @@ describe("Application", () => {
   describe("Delete Application", () => {
     test("No application found 404", async () => {
       const randomId = createRandomId();
-      const user = await supertest(app)
-        .post(`${URL}/auth/register`)
-        .send(registerHelper(3).companyRegisterInput);
+      const randomNumber = generateUniqueNumber();
+      const user = await registerCompany(app, randomNumber);
+
       const token = getTokenFromResponse(user);
 
       const { status, body } = await requestWithAuth(
