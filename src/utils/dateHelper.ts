@@ -41,4 +41,20 @@ const checkInterviewDateConflict = async (
   return true;
 };
 
-export { isInterviewDateTimeValid, checkInterviewDateConflict };
+const isReviewDateValid = (date: Date) => {
+  const formattedDate = moment(date);
+  const datePlusOneDay = moment(formattedDate).add(1, "days");
+  const now = moment.now();
+
+  if (moment(datePlusOneDay).isBefore(moment(now))) {
+    return false;
+  }
+
+  return true;
+};
+
+export {
+  isInterviewDateTimeValid,
+  checkInterviewDateConflict,
+  isReviewDateValid,
+};

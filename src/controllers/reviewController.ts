@@ -4,6 +4,7 @@ import { Application } from "../models/Application";
 import { Job } from "../models/Job";
 import { Review, ReviewInput } from "../models/Review";
 import checkPermission from "../utils/checkPermission";
+import { isReviewDateValid } from "../utils/dateHelper";
 
 const createReview = async (
   req: Request<{}, {}, ReviewInput>,
@@ -89,11 +90,8 @@ const updateReview = async (req: Request, res: Response) => {
   }
 
   const date = review.createdAt;
-  const formattedDate = moment(date);
-  const datePlusOneDay = moment(formattedDate).add(1, "days");
-  const now = moment.now();
 
-  if (moment(datePlusOneDay).isBefore(moment(now))) {
+  if (!isReviewDateValid(date)) {
     return res.status(403).json({
       msg: "You can only update your review within 24 hours after it was created!",
     });

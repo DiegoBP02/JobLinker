@@ -12,7 +12,7 @@ import moment from "moment";
 import {
   checkInterviewDateConflict,
   isInterviewDateTimeValid,
-} from "../utils/interviewValidateDate";
+} from "../utils/dateHelper";
 
 const createInterview = async (
   req: Request<{}, {}, InterviewInput>,
