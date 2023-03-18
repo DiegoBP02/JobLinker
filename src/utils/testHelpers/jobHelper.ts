@@ -33,6 +33,8 @@ const createJobResult = {
     salary: 120000,
     type: "full-time",
     updatedAt: expect.any(String),
+    averageRating: expect.any(Number),
+    numOfReviews: expect.any(Number),
   },
 };
 

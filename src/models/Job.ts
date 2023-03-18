@@ -8,6 +8,8 @@ type JobDocument = Document & {
   location: string;
   salary: number;
   type: string;
+  averageRating: number;
+  numOfReviews: number;
   companyId: UserDocument["_id"];
 };
 
@@ -51,6 +53,14 @@ const JobSchema: mongoose.Schema<JobDocument> = new mongoose.Schema(
       enum: ["full-time", "part-time", "remote", "internship"],
       required: [true, "Please provide type!"],
     },
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    numOfReviews: {
+      type: Number,
+      default: 0,
+    },
     companyId: {
       type: mongoose.Types.ObjectId,
       ref: "User",
@@ -67,6 +77,13 @@ JobSchema.virtual("applications", {
   justOne: false,
 });
 
+JobSchema.virtual("reviews", {
+  ref: "Review",
+  localField: "_id",
+  foreignField: "job",
+  justOne: false,
+});
+
 JobSchema.pre("remove", async function () {
   // @ts-ignore
   await this.model("Application").deleteMany({ job: this._id });
@@ -75,6 +92,11 @@ JobSchema.pre("remove", async function () {
 JobSchema.pre("remove", async function () {
   // @ts-ignore
   await this.model("Interview").deleteMany({ job: this._id });
+});
+
+JobSchema.pre("remove", async function () {
+  // @ts-ignore
+  await this.model("Review").deleteMany({ job: this._id });
 });
 
 const Job: Model<JobDocument> = mongoose.model<JobDocument>("Job", JobSchema);

@@ -75,7 +75,7 @@ const getAllApplications = async (req: Request, res: Response) => {
 
   if (applications.length === 0) {
     return res
-      .status(400)
+      .status(404)
       .json({ msg: `No application from user with ${userId} id found!` });
   }
 

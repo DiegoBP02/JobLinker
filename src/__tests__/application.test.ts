@@ -157,7 +157,7 @@ describe("Application", () => {
         token
       );
 
-      expect(status).toBe(400);
+      expect(status).toBe(404);
       expect(body).toEqual({
         msg: `No application from user with ${user.body.tokenUser.userId} id found!`,
       });

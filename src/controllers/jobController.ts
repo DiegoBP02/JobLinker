@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Application } from "../models/Application";
 import { Job, JobDocument, JobInput } from "../models/Job";
+import { Review } from "../models/Review";
 import checkPermission from "../utils/checkPermission";
 
 const createJob = async (req: Request<{}, {}, JobInput>, res: Response) => {
@@ -74,6 +75,7 @@ const deleteJob = async (req: Request, res: Response) => {
   }
 
   await Application.deleteMany({ job: jobId }).exec();
+  await Review.deleteMany({ job: jobId }).exec();
   await Job.deleteOne({ _id: jobId }).exec();
 
   return res.status(200).json({ msg: "Job deleted successfully!" });

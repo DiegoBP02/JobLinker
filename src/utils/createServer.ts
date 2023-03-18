@@ -16,6 +16,7 @@ import authRouter from "../routes/authRoutes";
 import jobRouter from "../routes/jobRoutes";
 import applicationRouter from "../routes/applicationRoutes";
 import interviewRouter from "../routes/interviewRoutes";
+import reviewRouter from "../routes/reviewRoutes";
 
 function createServer() {
   const app = express();
@@ -30,6 +31,7 @@ function createServer() {
   app.use("/api/v1/jobs", jobRouter);
   app.use("/api/v1/application", applicationRouter);
   app.use("/api/v1/interview", interviewRouter);
+  app.use("/api/v1/review", reviewRouter);
 
   app.use(notFoundMiddleware);
   app.use(errorHandlerMiddleware);
