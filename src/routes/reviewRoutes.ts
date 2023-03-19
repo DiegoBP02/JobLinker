@@ -3,7 +3,7 @@ const router = express.Router();
 
 import {
   createReview,
-  getSingleReview,
+  getReview,
   getAllReviewsByJob,
   updateReview,
   deleteReview,
@@ -21,7 +21,7 @@ router.post(
 );
 
 router.get("/job/:id", getAllReviewsByJob);
-router.get("/:id", getSingleReview);
+router.get("/:id", getReview);
 
 router.patch(
   "/:id",

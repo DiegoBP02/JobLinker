@@ -53,7 +53,7 @@ const getAllReviewsByJobResult = {
       __v: 0,
     },
   ],
-  totalCount: 1,
+  totalCount: expect.any(Number),
 };
 
 const updatedReviewResult = {

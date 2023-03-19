@@ -42,7 +42,7 @@ const createReview = async (
   return res.status(201).json({ review });
 };
 
-const getSingleReview = async (req: Request, res: Response) => {
+const getReview = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   const review = await Review.findOne({ _id: id });
@@ -55,12 +55,23 @@ const getSingleReview = async (req: Request, res: Response) => {
 
 const getAllReviewsByJob = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const reviews = await Review.find({ job: id })
+  const { sort } = req.query;
+
+  let result = Review.find({ job: id })
     .populate({
       path: "job",
       select: "company",
     })
     .populate({ path: "user", select: "fullName" });
+
+  if (sort === "ascending") {
+    result = result.sort("rating");
+  }
+  if (sort === "descending") {
+    result = result.sort("-rating");
+  }
+
+  const reviews = await result;
 
   if (reviews.length === 0) {
     return res
@@ -124,7 +135,7 @@ const deleteReview = async (req: Request, res: Response) => {
 
 export {
   createReview,
-  getSingleReview,
+  getReview,
   getAllReviewsByJob,
   updateReview,
   deleteReview,

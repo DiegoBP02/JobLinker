@@ -230,37 +230,46 @@ describe("Job", () => {
       expect(status).toBe(200);
       expect(body.totalCount).toBe(body.jobs.length);
       expect(body.numOfPages).toBe(body.numOfPages);
-
-      const jobSearch = await requestWithAuth(
-        app,
-        "get",
-        `${URL}/jobs?search=frontend%20engineer`,
-        token
-      );
-
-      expect(jobSearch.status).toBe(200);
-      expect(jobSearch.body.jobs[0].position).toEqual("Frontend Engineer");
-
-      const jobSort = await requestWithAuth(
-        app,
-        "get",
-        `${URL}/jobs?sort=ascending`,
-        token
-      );
-
-      expect(jobSort.status).toBe(200);
-      expect(jobSort.body.jobs[0].salary).toBe(100000);
-
-      const jobType = await requestWithAuth(
-        app,
-        "get",
-        `${URL}/jobs?type=part-time`,
-        token
-      );
-
-      expect(jobType.status).toBe(200);
-      expect(jobType.body.jobs[0].type).toEqual("part-time");
+      expect(body.jobs).toBeDefined();
     });
+  });
+  test("Successful sorting 200", async () => {
+    const randomNumber = generateUniqueNumber();
+    const company = await registerCompany(app, randomNumber);
+    const token = getTokenFromResponse(company);
+
+    await createJobAndGetId(app, token, createJobInput);
+    await requestWithAuth(app, "post", `${URL}/jobs`, token, createJobInput2);
+
+    const jobSearch = await requestWithAuth(
+      app,
+      "get",
+      `${URL}/jobs?search=frontend%20engineer`,
+      token
+    );
+
+    expect(jobSearch.status).toBe(200);
+    expect(jobSearch.body.jobs[0].position).toEqual("Frontend Engineer");
+
+    const jobSort = await requestWithAuth(
+      app,
+      "get",
+      `${URL}/jobs?sort=ascending`,
+      token
+    );
+
+    expect(jobSort.status).toBe(200);
+    expect(jobSort.body.jobs[0].salary).toBe(100000);
+
+    const jobType = await requestWithAuth(
+      app,
+      "get",
+      `${URL}/jobs?type=part-time`,
+      token
+    );
+
+    expect(jobType.status).toBe(200);
+    expect(jobType.body.jobs[0].type).toEqual("part-time");
   });
   describe("Get All Jobs By Company", () => {
     test("Successful 200", async () => {

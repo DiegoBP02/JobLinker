@@ -125,7 +125,7 @@ describe("Review", () => {
     });
   });
 
-  describe("Get single review", () => {
+  describe("Get review", () => {
     test("No review found 404", async () => {
       const randomId = createRandomId();
       const token = await loginUserAndGetToken(app);
@@ -189,6 +189,35 @@ describe("Review", () => {
 
       expect(status).toBe(200);
       expect(body).toEqual(getAllReviewsByJobResult);
+    });
+    test("Successful sorting 200", async () => {
+      const token = await loginUserAndGetToken(app);
+      const randomNumber = generateUniqueNumber();
+
+      const { jobId } = await createJobAndApplication(app, token);
+      await createReview(app, token, jobId);
+
+      const user = await registerUser(app, randomNumber);
+      const tokenUser = getTokenFromResponse(user);
+      await createApplication(app, tokenUser, jobId);
+      const updatedInput = { ...createReviewInput, rating: 1, job: jobId };
+      await requestWithAuth(
+        app,
+        "post",
+        `${URL}/review`,
+        tokenUser,
+        updatedInput
+      );
+
+      const { status: sortStatus, body: sortBody } = await requestWithAuth(
+        app,
+        "get",
+        `${URL}/review/job/${jobId}?sort=ascending`,
+        token
+      );
+
+      expect(sortStatus).toBe(200);
+      expect(sortBody.reviews[0].rating).toBe(1);
     });
   });
   describe("Update review", () => {
