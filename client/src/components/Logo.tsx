@@ -1,6 +1,5 @@
 import logo from "../assets/images/logo/logo.png";
 import { Link } from "react-router-dom";
-import { FunctionComponent } from "react";
 
 interface LogoProps {
   center?: boolean;
@@ -8,7 +7,7 @@ interface LogoProps {
   widthFix?: boolean;
 }
 
-const Logo: FunctionComponent<LogoProps> = ({ center, noMargin, widthFix }) => {
+const Logo: React.FC<LogoProps> = ({ center, noMargin, widthFix }) => {
   let className = "nav";
   if (center) {
     className += " center";

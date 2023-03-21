@@ -199,7 +199,7 @@ ul {
 
 .form {
   width: 90vw;
-  max-width: fit-content;
+  max-width: 25rem;
   background: var(--white);
   border-radius: var(--borderRadius);
   box-shadow: var(--shadow-2);

@@ -2,13 +2,13 @@ import Wrapper from "../assets/wrappers/Landing";
 import { Link, Navigate } from "react-router-dom";
 import img from "../assets/images/landing/landing.svg";
 import Logo from "../components/Logo";
-// import { useAppContext } from "../context/appContext";
+import { useAppContext } from "../context/appContext";
 
 const Landing = () => {
-  // const { user } = useAppContext();
+  const { user } = useAppContext();
   return (
     <>
-      {/* {user && <Navigate to="/" />} */}
+      {user && <Navigate to="/" />}
       <Wrapper>
         <Logo />
         <div className="container page">

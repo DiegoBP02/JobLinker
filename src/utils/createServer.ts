@@ -6,6 +6,11 @@ import express from "express";
 // packages
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import helmet from "helmet";
+// @ts-ignore
+import xss from "xss-clean";
+import mongoSanitize from "express-mongo-sanitize";
 
 // middlewares
 import notFoundMiddleware from "../middleware/not-found";
@@ -24,7 +29,11 @@ function createServer() {
   if (process.env.NODE_ENV !== "production") {
     app.use(morgan("dev"));
   }
+  app.use(cors());
   app.use(express.json());
+  app.use(helmet());
+  app.use(xss());
+  app.use(mongoSanitize());
   app.use(cookieParser(<string>process.env.JWT_SECRET));
 
   app.use("/api/v1/auth", authRouter);
