@@ -1,8 +1,21 @@
-import Dashboard from "./Dashboard";
+import AddInterview from "./company/AddInterview";
+import AddJob from "./company/AddJob";
+import CompanyInterviews from "./company/CompanyInterviews";
+import CompanyJobs from "./company/CompanyJobs";
 import Error from "./Error";
 import Landing from "./Landing";
 import ProtectedRoute from "./ProtectedRoute";
 import Register from "./Register";
 import SharedLayout from "./SharedLayout";
 
-export { Dashboard, Error, Landing, SharedLayout, Register, ProtectedRoute };
+export {
+  Error,
+  Landing,
+  SharedLayout,
+  Register,
+  ProtectedRoute,
+  AddJob,
+  AddInterview,
+  CompanyInterviews,
+  CompanyJobs,
+};

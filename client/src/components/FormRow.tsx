@@ -1,7 +1,7 @@
 interface FormRowProps {
   type: string;
   name: string;
-  value: string;
+  value: string | number;
   handleChange: React.ChangeEventHandler<HTMLInputElement>;
   noLabel?: boolean;
   labelText?: string;

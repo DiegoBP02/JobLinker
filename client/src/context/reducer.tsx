@@ -6,9 +6,13 @@ import {
   SETUP_USER_SUCCESS,
   GET_CURRENT_USER_BEGIN,
   GET_CURRENT_USER_SUCCESS,
-  GET_CURRENT_USER_ERROR,
   LOGOUT_USER,
   TOGGLE_SIDEBAR,
+  HANDLE_CHANGE,
+  CREATE_JOB_BEGIN,
+  CREATE_JOB_SUCCESS,
+  CREATE_JOB_ERROR,
+  CLEAR_VALUES,
 } from "./actions";
 
 import { initialState, InitialStateProps } from "./appContext";
@@ -66,7 +70,7 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
   if (action.type === GET_CURRENT_USER_BEGIN) {
     return {
       ...state,
-      userLoading: false,
+      userLoading: true,
       showAlert: false,
     };
   }
@@ -77,12 +81,6 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       user: action.payload.user,
     };
   }
-  if (action.type === GET_CURRENT_USER_ERROR) {
-    return {
-      ...state,
-      userLoading: false,
-    };
-  }
   if (action.type === LOGOUT_USER) {
     return {
       ...initialState,
@@ -90,6 +88,41 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
   }
   if (action.type === TOGGLE_SIDEBAR) {
     return { ...state, showSidebar: !state.showSidebar };
+  }
+  if (action.type === HANDLE_CHANGE) {
+    return { ...state, [action.payload.name]: action.payload.value };
+  }
+  if (action.type === CREATE_JOB_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === CREATE_JOB_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "success",
+      alertText: "Successful! Job created!",
+    };
+  }
+  if (action.type === CREATE_JOB_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
+  }
+  if (action.type === CLEAR_VALUES) {
+    return {
+      ...state,
+      isLoading: false,
+      position: "",
+      description: "",
+      location: "",
+      salary: 0,
+      jobType: "full-time",
+    };
   }
   throw new Error(`No such action :${action.type}`);
 };

@@ -1,10 +1,14 @@
 import React, { useState, useReducer, useContext, useEffect } from "react";
 import {
   CLEAR_ALERT,
+  CLEAR_VALUES,
+  CREATE_JOB_BEGIN,
+  CREATE_JOB_ERROR,
+  CREATE_JOB_SUCCESS,
   DISPLAY_ALERT,
   GET_CURRENT_USER_BEGIN,
-  GET_CURRENT_USER_ERROR,
   GET_CURRENT_USER_SUCCESS,
+  HANDLE_CHANGE,
   LOGOUT_USER,
   SETUP_USER_BEGIN,
   SETUP_USER_ERROR,
@@ -38,6 +42,16 @@ export type InitialStateProps = {
   logoutUser: () => Promise<void>;
   showSidebar: boolean;
   toggleSidebar: () => void;
+  handleChange: (name: string, value: string) => void;
+  position: string;
+  description: string;
+  location: string;
+  salary: number;
+  jobType: string;
+  jobTypeOptions: string[];
+  company: string;
+  createJob: () => void;
+  clearValues: () => void;
 };
 
 export const initialState: InitialStateProps = {
@@ -54,6 +68,16 @@ export const initialState: InitialStateProps = {
   logoutUser: async () => {},
   showSidebar: true,
   toggleSidebar: () => {},
+  handleChange: () => {},
+  position: "",
+  description: "",
+  location: "",
+  salary: 0,
+  jobType: "full-time",
+  jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
+  company: "",
+  createJob: () => {},
+  clearValues: () => {},
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -134,12 +158,44 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   const logoutUser = async () => {
-    await authFetch("/auth/logout");
+    await authFetch.get("/auth/logout");
     dispatch({ type: LOGOUT_USER });
   };
 
   const toggleSidebar = () => {
     dispatch({ type: TOGGLE_SIDEBAR });
+  };
+
+  const handleChange = (name: string, value: string) => {
+    dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
+  };
+
+  const createJob = async () => {
+    dispatch({ type: CREATE_JOB_BEGIN });
+
+    try {
+      const { position, description, location, salary, jobType: type } = state;
+
+      await authFetch.post("/jobs", {
+        position,
+        description,
+        location,
+        salary,
+        type,
+      });
+
+      dispatch({ type: CREATE_JOB_SUCCESS });
+      clearAlert();
+    } catch (error: any) {
+      dispatch({
+        type: CREATE_JOB_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+  };
+
+  const clearValues = () => {
+    dispatch({ type: CLEAR_VALUES });
   };
 
   useEffect(() => {
@@ -156,6 +212,9 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         getCurrentUser,
         logoutUser,
         toggleSidebar,
+        handleChange,
+        createJob,
+        clearValues,
       }}
     >
       {children}

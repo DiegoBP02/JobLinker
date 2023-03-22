@@ -19,7 +19,7 @@ const links = [
   {
     id: 3,
     text: "Add interview",
-    path: "create-interview",
+    path: "add-interview",
     icon: <FaWpforms />,
   },
   {

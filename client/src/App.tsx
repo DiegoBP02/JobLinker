@@ -5,7 +5,10 @@ import {
   Landing,
   Register,
   ProtectedRoute,
-  Dashboard,
+  AddJob,
+  AddInterview,
+  CompanyJobs,
+  CompanyInterviews,
 } from "./pages";
 
 function App() {
@@ -20,7 +23,10 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
+          <Route index element={<AddJob />} />
+          <Route path="company-jobs" element={<CompanyJobs />} />
+          <Route path="add-interview" element={<AddInterview />} />
+          <Route path="company-interviews" element={<CompanyInterviews />} />
         </Route>
         <Route path="/landing" element={<Landing />} />
         <Route path="/register" element={<Register />} />
