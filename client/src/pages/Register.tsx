@@ -66,7 +66,7 @@ function Register() {
     <Wrapper className="full-page ">
       <form className="form" onSubmit={onSubmit}>
         <Logo center widthFix />
-        <h3> {values.isMember ? "Login" : "Register"}</h3>
+        <h3 className="mt"> {values.isMember ? "Login" : "Register"}</h3>
         {showAlert && <Alert />}
         {/* name field */}
         {!values.isMember && (

@@ -1,7 +1,7 @@
 import Wrapper from "../assets/wrappers/Landing";
 import { Link, Navigate } from "react-router-dom";
 import img from "../assets/images/landing/landing.svg";
-import Logo from "../components/Logo";
+import logo from "../assets/images/logo/logo.svg";
 import { useAppContext } from "../context/appContext";
 
 const Landing = () => {
@@ -10,7 +10,9 @@ const Landing = () => {
     <>
       {user && <Navigate to="/" />}
       <Wrapper>
-        <Logo />
+        <nav className="nav">
+          <img src={logo} alt="logo image" className="sideBar" />
+        </nav>
         <div className="container page">
           <div className="info">
             <h1>JobLinker</h1>

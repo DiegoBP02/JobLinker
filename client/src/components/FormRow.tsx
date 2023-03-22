@@ -1,4 +1,4 @@
-interface LogoProps {
+interface FormRowProps {
   type: string;
   name: string;
   value: string;
@@ -7,7 +7,7 @@ interface LogoProps {
   labelText?: string;
 }
 
-const FormRow: React.FC<LogoProps> = ({
+const FormRow: React.FC<FormRowProps> = ({
   type,
   name,
   value,

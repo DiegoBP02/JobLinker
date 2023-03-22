@@ -8,6 +8,7 @@ import {
   GET_CURRENT_USER_SUCCESS,
   GET_CURRENT_USER_ERROR,
   LOGOUT_USER,
+  TOGGLE_SIDEBAR,
 } from "./actions";
 
 import { initialState, InitialStateProps } from "./appContext";
@@ -86,6 +87,9 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
     return {
       ...initialState,
     };
+  }
+  if (action.type === TOGGLE_SIDEBAR) {
+    return { ...state, showSidebar: !state.showSidebar };
   }
   throw new Error(`No such action :${action.type}`);
 };

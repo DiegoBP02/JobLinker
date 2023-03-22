@@ -9,6 +9,7 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_ERROR,
   SETUP_USER_SUCCESS,
+  TOGGLE_SIDEBAR,
 } from "./actions";
 import reducer, { ActionType } from "./reducer";
 import axios from "axios";
@@ -35,6 +36,8 @@ export type InitialStateProps = {
   getCurrentUser: () => Promise<void>;
   userLoading: boolean;
   logoutUser: () => Promise<void>;
+  showSidebar: boolean;
+  toggleSidebar: () => void;
 };
 
 export const initialState: InitialStateProps = {
@@ -49,6 +52,8 @@ export const initialState: InitialStateProps = {
   getCurrentUser: async () => {},
   userLoading: false,
   logoutUser: async () => {},
+  showSidebar: true,
+  toggleSidebar: () => {},
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -133,6 +138,10 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: LOGOUT_USER });
   };
 
+  const toggleSidebar = () => {
+    dispatch({ type: TOGGLE_SIDEBAR });
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -146,6 +155,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         setupUser,
         getCurrentUser,
         logoutUser,
+        toggleSidebar,
       }}
     >
       {children}

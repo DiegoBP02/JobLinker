@@ -1,36 +1,38 @@
-import Wrapper from "../assets/wrappers/Navbar";
-import { FaUserCircle } from "react-icons/fa";
-import { RiArrowDownSFill } from "react-icons/ri";
 import { useState } from "react";
-import Logo from "./Logo";
+import { FaAlignLeft, FaUserCircle, FaCaretDown } from "react-icons/fa";
 import { useAppContext } from "../context/appContext";
+import Logo from "./Logo";
+import Wrapper from "../assets/wrappers/Navbar";
 
 const Navbar = () => {
-  const { user, logoutUser } = useAppContext();
-  const [showLogout, setShowLogout] = useState<boolean>(false);
-
-  const firstName = user?.fullName.split(" ")[0];
+  const { toggleSidebar, user, logoutUser } = useAppContext();
+  const [showLogout, setShowLogout] = useState(false);
 
   return (
     <Wrapper>
-      <header className="header">
-        <Logo noMargin />
-        <div className="btns">
+      <div className="nav-center">
+        <button className="toggle-btn" onClick={toggleSidebar}>
+          <FaAlignLeft />
+        </button>
+
+        <div>
+          <h3 className="logo-text">dashboard</h3>
+        </div>
+
+        <div className="btn-container">
           <button className="btn" onClick={() => setShowLogout(!showLogout)}>
             <FaUserCircle />
-            {firstName}
-            <RiArrowDownSFill />
+            {user?.fullName}
+            <FaCaretDown />
           </button>
-          <button
-            className={showLogout ? "btn logout show-dropdown" : "btn logout "}
-            onClick={logoutUser}
-          >
-            Logout
-          </button>
+          <div className={showLogout ? "dropdown show-dropdown" : "dropdown"}>
+            <button className="dropdown-btn" onClick={logoutUser}>
+              logout
+            </button>
+          </div>
         </div>
-      </header>
+      </div>
     </Wrapper>
   );
 };
-
 export default Navbar;

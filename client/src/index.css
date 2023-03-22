@@ -199,7 +199,7 @@ ul {
 
 .form {
   width: 90vw;
-  max-width: 25rem;
+  max-width: var(--fixed-width);
   background: var(--white);
   border-radius: var(--borderRadius);
   box-shadow: var(--shadow-2);
@@ -306,4 +306,9 @@ ul {
   .form-select {
     text-align: center;
   }
+}
+
+.sideBar {
+  width: 70%;
+  max-width: 10rem;
 }

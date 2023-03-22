@@ -5,6 +5,7 @@ import {
   Landing,
   Register,
   ProtectedRoute,
+  Dashboard,
 } from "./pages";
 
 function App() {
@@ -18,7 +19,9 @@ function App() {
               <SharedLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<Dashboard />} />
+        </Route>
         <Route path="/landing" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<Error />} />
