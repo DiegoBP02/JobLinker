@@ -5,7 +5,12 @@ import {
   CREATE_JOB_BEGIN,
   CREATE_JOB_ERROR,
   CREATE_JOB_SUCCESS,
+  DELETE_JOB_BEGIN,
+  DELETE_JOB_ERROR,
   DISPLAY_ALERT,
+  GET_ALL_JOBS_BEGIN,
+  GET_ALL_JOBS_ERROR,
+  GET_ALL_JOBS_SUCCESS,
   GET_CURRENT_USER_BEGIN,
   GET_CURRENT_USER_SUCCESS,
   HANDLE_CHANGE,
@@ -22,6 +27,18 @@ type User = {
   fullName: string;
   userId: string;
   role: string;
+};
+
+export type JobProps = {
+  position: string;
+  company: string;
+  location: string;
+  createdAt: string;
+  description: string;
+  salary: number;
+  _id: string;
+  type: string;
+  key: any;
 };
 
 export type InitialStateProps = {
@@ -52,6 +69,10 @@ export type InitialStateProps = {
   company: string;
   createJob: () => void;
   clearValues: () => void;
+  getJobs: () => void;
+  jobs: JobProps[] | null;
+  totalJobs: number;
+  deleteJob: (id: string) => Promise<void>;
 };
 
 export const initialState: InitialStateProps = {
@@ -66,7 +87,7 @@ export const initialState: InitialStateProps = {
   getCurrentUser: async () => {},
   userLoading: false,
   logoutUser: async () => {},
-  showSidebar: true,
+  showSidebar: false,
   toggleSidebar: () => {},
   handleChange: () => {},
   position: "",
@@ -78,6 +99,10 @@ export const initialState: InitialStateProps = {
   company: "",
   createJob: () => {},
   clearValues: () => {},
+  getJobs: () => {},
+  jobs: null,
+  totalJobs: 0,
+  deleteJob: async () => {},
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -185,6 +210,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       });
 
       dispatch({ type: CREATE_JOB_SUCCESS });
+      dispatch({ type: CLEAR_VALUES });
       clearAlert();
     } catch (error: any) {
       dispatch({
@@ -196,6 +222,36 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const clearValues = () => {
     dispatch({ type: CLEAR_VALUES });
+  };
+
+  const getJobs = async () => {
+    dispatch({ type: GET_ALL_JOBS_BEGIN });
+
+    try {
+      const { user } = state;
+      const { data } = await authFetch.get(`/jobs/company/${user?.userId}`);
+      const { jobs, totalCount: totalJobs } = data;
+      dispatch({ type: GET_ALL_JOBS_SUCCESS, payload: { jobs, totalJobs } });
+    } catch (error: any) {
+      dispatch({
+        type: GET_ALL_JOBS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+  };
+
+  const deleteJob = async (id: string) => {
+    dispatch({ type: DELETE_JOB_BEGIN });
+
+    try {
+      await authFetch.delete(`/jobs/${id}`);
+      getJobs();
+    } catch (error: any) {
+      dispatch({
+        type: DELETE_JOB_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
   };
 
   useEffect(() => {
@@ -215,6 +271,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         handleChange,
         createJob,
         clearValues,
+        getJobs,
+        deleteJob,
       }}
     >
       {children}

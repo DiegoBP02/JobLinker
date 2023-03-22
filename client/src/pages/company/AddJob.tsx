@@ -14,6 +14,8 @@ const AddJob = () => {
     jobType,
     jobTypeOptions,
     createJob,
+    isLoading,
+    clearValues,
   } = useAppContext();
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -23,10 +25,6 @@ const AddJob = () => {
       displayAlert();
       return;
     }
-    // if (isEditing) {
-    //   editJob();
-    //   return;
-    // }
     createJob();
   };
 
@@ -41,7 +39,6 @@ const AddJob = () => {
   return (
     <Wrapper>
       <form className="form">
-        {/* <h3>{isEditing ? "edit job" : "add job"}</h3> */}
         {showAlert && <Alert />}
 
         <div className="form-center">
@@ -93,9 +90,11 @@ const AddJob = () => {
             </button>
             <button
               className="btn btn-block clear-btn"
+              type="submit"
+              disabled={isLoading}
               onClick={(e) => {
                 e.preventDefault();
-                // clearValues();
+                clearValues();
               }}
             >
               clear

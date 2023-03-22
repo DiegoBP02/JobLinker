@@ -2,6 +2,7 @@ import AddInterview from "./company/AddInterview";
 import AddJob from "./company/AddJob";
 import CompanyInterviews from "./company/CompanyInterviews";
 import CompanyJobs from "./company/CompanyJobs";
+import SingleJob from "./company/SingleJob";
 import Error from "./Error";
 import Landing from "./Landing";
 import ProtectedRoute from "./ProtectedRoute";
@@ -18,4 +19,5 @@ export {
   AddInterview,
   CompanyInterviews,
   CompanyJobs,
+  SingleJob,
 };

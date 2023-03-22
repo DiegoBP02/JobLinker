@@ -9,6 +9,7 @@ import {
   AddInterview,
   CompanyJobs,
   CompanyInterviews,
+  SingleJob,
 } from "./pages";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="company-jobs" element={<CompanyJobs />} />
           <Route path="add-interview" element={<AddInterview />} />
           <Route path="company-interviews" element={<CompanyInterviews />} />
+          <Route path="single-job/:id" element={<SingleJob />} />
         </Route>
         <Route path="/landing" element={<Landing />} />
         <Route path="/register" element={<Register />} />

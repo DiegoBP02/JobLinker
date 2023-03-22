@@ -13,9 +13,14 @@ import {
   CREATE_JOB_SUCCESS,
   CREATE_JOB_ERROR,
   CLEAR_VALUES,
+  GET_ALL_JOBS_BEGIN,
+  GET_ALL_JOBS_SUCCESS,
+  GET_ALL_JOBS_ERROR,
+  DELETE_JOB_BEGIN,
+  DELETE_JOB_ERROR,
 } from "./actions";
 
-import { initialState, InitialStateProps } from "./appContext";
+import { initialState, InitialStateProps, JobProps } from "./appContext";
 
 export type ActionType = {
   type: string;
@@ -122,6 +127,38 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       location: "",
       salary: 0,
       jobType: "full-time",
+    };
+  }
+  if (action.type === GET_ALL_JOBS_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === GET_ALL_JOBS_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      jobs: action.payload.jobs,
+      totalJobs: action.payload.totalJobs,
+    };
+  }
+  if (action.type === GET_ALL_JOBS_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
+  }
+  if (action.type === DELETE_JOB_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === DELETE_JOB_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
     };
   }
   throw new Error(`No such action :${action.type}`);
