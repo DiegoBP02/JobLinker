@@ -11,6 +11,9 @@ import {
   GET_ALL_JOBS_BEGIN,
   GET_ALL_JOBS_ERROR,
   GET_ALL_JOBS_SUCCESS,
+  GET_APPLICANTS_BEGIN,
+  GET_APPLICANTS_ERROR,
+  GET_APPLICANTS_SUCCESS,
   GET_CURRENT_USER_BEGIN,
   GET_CURRENT_USER_SUCCESS,
   HANDLE_CHANGE,
@@ -18,6 +21,7 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_ERROR,
   SETUP_USER_SUCCESS,
+  TOGGLE_APPLICANTS,
   TOGGLE_SIDEBAR,
 } from "./actions";
 import reducer, { ActionType } from "./reducer";
@@ -39,6 +43,50 @@ export type JobProps = {
   _id: string;
   type: string;
   key: any;
+};
+
+export type ApplicantProps = {
+  _id: string;
+  resume: string;
+  experience: {
+    title: string;
+    company: string;
+    location: string;
+    startDate: string;
+    endDate: string;
+    responsibilities: string[];
+    _id: string;
+  };
+  portfolio: {
+    title: string;
+    url: string;
+    _id: string;
+  };
+  certifications?: string[];
+  education: {
+    degree: string;
+    instituition: string;
+    location: string;
+    graduation: string;
+    _id: string;
+  };
+  status: string;
+  user: {
+    _id: string;
+    fullName: string;
+    email: string;
+  };
+  job: {
+    _id: string;
+    position: string;
+    company: string;
+    description: string;
+    location: string;
+    salary: number;
+    type: string;
+  };
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type InitialStateProps = {
@@ -73,6 +121,11 @@ export type InitialStateProps = {
   jobs: JobProps[] | null;
   totalJobs: number;
   deleteJob: (id: string) => Promise<void>;
+  getApplicants: (id: string) => Promise<void>;
+  applicants: ApplicantProps[] | null;
+  totalApplicants: number;
+  showApplicants: boolean;
+  toggleApplicants: () => void;
 };
 
 export const initialState: InitialStateProps = {
@@ -103,6 +156,11 @@ export const initialState: InitialStateProps = {
   jobs: null,
   totalJobs: 0,
   deleteJob: async () => {},
+  getApplicants: async () => {},
+  applicants: null,
+  totalApplicants: 0,
+  showApplicants: false,
+  toggleApplicants: () => {},
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -254,6 +312,29 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
+  const getApplicants = async (id: string) => {
+    dispatch({ type: GET_APPLICANTS_BEGIN });
+
+    try {
+      const { data } = await authFetch.get(`/jobs/job/${id}`);
+      const { singleJobApplicants, totalCount: totalApplicants } = data;
+
+      dispatch({
+        type: GET_APPLICANTS_SUCCESS,
+        payload: { singleJobApplicants, totalApplicants },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_APPLICANTS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+  };
+
+  const toggleApplicants = () => {
+    dispatch({ type: TOGGLE_APPLICANTS });
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -273,6 +354,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         clearValues,
         getJobs,
         deleteJob,
+        getApplicants,
+        toggleApplicants,
       }}
     >
       {children}

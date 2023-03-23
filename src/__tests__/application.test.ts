@@ -13,6 +13,7 @@ import {
   registerCompany,
   registerUser,
   requestWithAuth,
+  registerHelper,
 } from "../utils/testHelpers/authenticateHelper";
 import {
   createJobAndGetId,
@@ -139,6 +140,11 @@ describe("Application", () => {
           application: {
             ...createApplicationResult.application,
             job: { ...createJobInput, _id: jobId, company: "test" },
+            user: {
+              _id: expect.any(String),
+              email: expect.any(String),
+              fullName: expect.any(String),
+            },
           },
         });
       });

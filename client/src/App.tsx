@@ -10,6 +10,7 @@ import {
   CompanyJobs,
   CompanyInterviews,
   SingleJob,
+  SingleApplication,
 } from "./pages";
 
 function App() {
@@ -29,6 +30,10 @@ function App() {
           <Route path="add-interview" element={<AddInterview />} />
           <Route path="company-interviews" element={<CompanyInterviews />} />
           <Route path="single-job/:id" element={<SingleJob />} />
+          <Route
+            path="single-application/:id"
+            element={<SingleApplication />}
+          />
         </Route>
         <Route path="/landing" element={<Landing />} />
         <Route path="/register" element={<Register />} />

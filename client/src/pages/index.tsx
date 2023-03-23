@@ -2,6 +2,7 @@ import AddInterview from "./company/AddInterview";
 import AddJob from "./company/AddJob";
 import CompanyInterviews from "./company/CompanyInterviews";
 import CompanyJobs from "./company/CompanyJobs";
+import SingleApplication from "./company/SingleApplication";
 import SingleJob from "./company/SingleJob";
 import Error from "./Error";
 import Landing from "./Landing";
@@ -20,4 +21,5 @@ export {
   CompanyInterviews,
   CompanyJobs,
   SingleJob,
+  SingleApplication,
 };

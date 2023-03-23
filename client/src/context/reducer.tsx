@@ -18,6 +18,10 @@ import {
   GET_ALL_JOBS_ERROR,
   DELETE_JOB_BEGIN,
   DELETE_JOB_ERROR,
+  GET_APPLICANTS_BEGIN,
+  GET_APPLICANTS_SUCCESS,
+  GET_APPLICANTS_ERROR,
+  TOGGLE_APPLICANTS,
 } from "./actions";
 
 import { initialState, InitialStateProps, JobProps } from "./appContext";
@@ -159,6 +163,32 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       showAlert: true,
       alertType: "danger",
       alertText: action.payload.msg,
+    };
+  }
+  if (action.type === GET_APPLICANTS_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === GET_APPLICANTS_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      applicants: action.payload.singleJobApplicants,
+      totalApplicants: action.payload.totalApplicants,
+    };
+  }
+  if (action.type === GET_APPLICANTS_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
+  }
+  if (action.type === TOGGLE_APPLICANTS) {
+    return {
+      ...state,
+      showApplicants: !state.showApplicants,
     };
   }
   throw new Error(`No such action :${action.type}`);

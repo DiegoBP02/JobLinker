@@ -49,10 +49,12 @@ const createApplication = async (
 const getApplication = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const application = await Application.findOne({ _id: id }).populate({
-    path: "job",
-    select: "_id position company description location salary type",
-  });
+  const application = await Application.findOne({ _id: id })
+    .populate({
+      path: "job",
+      select: "_id position company description location salary type",
+    })
+    .populate({ path: "user", select: "fullName email" });
 
   if (!application) {
     return res.status(404).json({ msg: `No application with ${id} id found!` });
@@ -68,10 +70,12 @@ const getAllApplications = async (req: Request, res: Response) => {
   // @ts-ignore
   const { userId } = req.user;
 
-  const applications = await Application.find({ user: userId }).populate({
-    path: "job",
-    select: "_id position company location salary type",
-  });
+  const applications = await Application.find({ user: userId })
+    .populate({
+      path: "job",
+      select: "_id position company location salary type",
+    })
+    .populate({ path: "user", select: "fullName" });
 
   if (applications.length === 0) {
     return res

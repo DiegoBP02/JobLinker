@@ -8,22 +8,24 @@ import JobInfo from "./JobInfo";
 const Job: React.FC<JobProps> = (job) => {
   const { deleteJob } = useAppContext();
 
-  let date = moment(job.createdAt).format("MMM Do, YYYY");
+  const { company, position, location, createdAt, type, _id } = job;
+
+  let date = moment(createdAt).format("MMM Do, YYYY");
 
   return (
     <Wrapper>
       <header>
-        <div className="main-icon">{job.company.charAt(0)}</div>
+        <div className="main-icon">{position.charAt(0)}</div>
         <div className="info">
-          <h5>{job.position}</h5>
-          <p>company</p>
+          <h5>{position}</h5>
+          <p>{company}</p>
         </div>
       </header>
       <div className="content">
         <div className="content-center">
-          <JobInfo icon={<FaLocationArrow />} text={job.location} />
+          <JobInfo icon={<FaLocationArrow />} text={location} />
           <JobInfo icon={<FaCalendarAlt />} text={date} />
-          <JobInfo icon={<FaBriefcase />} text={job.type} />
+          <JobInfo icon={<FaBriefcase />} text={type} />
         </div>
         <footer>
           <div className="actions">
@@ -31,7 +33,7 @@ const Job: React.FC<JobProps> = (job) => {
               <button
                 type="button"
                 className="btn delete-btn"
-                onClick={() => deleteJob(job._id)}
+                onClick={() => deleteJob(_id)}
               >
                 Delete
               </button>

@@ -1,11 +1,9 @@
-import { Moment } from "moment";
 import React from "react";
-import { IconType } from "react-icons/lib";
 import Wrapper from "../assets/wrappers/JobInfo";
 
 type JobInfoProps = {
   icon: JSX.Element;
-  text: string;
+  text: string | number;
 };
 
 const JobInfo: React.FC<JobInfoProps> = ({ icon, text }) => {
