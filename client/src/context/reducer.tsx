@@ -22,6 +22,9 @@ import {
   GET_APPLICANTS_SUCCESS,
   GET_APPLICANTS_ERROR,
   TOGGLE_APPLICANTS,
+  UPDATE_STATUS_BEGIN,
+  UPDATE_STATUS_SUCCESS,
+  UPDATE_STATUS_ERROR,
 } from "./actions";
 
 import { initialState, InitialStateProps, JobProps } from "./appContext";
@@ -189,6 +192,18 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
     return {
       ...state,
       showApplicants: !state.showApplicants,
+    };
+  }
+  if (action.type === UPDATE_STATUS_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === UPDATE_STATUS_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
     };
   }
   throw new Error(`No such action :${action.type}`);

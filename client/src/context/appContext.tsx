@@ -23,6 +23,9 @@ import {
   SETUP_USER_SUCCESS,
   TOGGLE_APPLICANTS,
   TOGGLE_SIDEBAR,
+  UPDATE_STATUS_BEGIN,
+  UPDATE_STATUS_ERROR,
+  UPDATE_STATUS_SUCCESS,
 } from "./actions";
 import reducer, { ActionType } from "./reducer";
 import axios from "axios";
@@ -76,15 +79,7 @@ export type ApplicantProps = {
     fullName: string;
     email: string;
   };
-  job: {
-    _id: string;
-    position: string;
-    company: string;
-    description: string;
-    location: string;
-    salary: number;
-    type: string;
-  };
+  job: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -126,6 +121,11 @@ export type InitialStateProps = {
   totalApplicants: number;
   showApplicants: boolean;
   toggleApplicants: () => void;
+  updateStatus: (
+    applicantId: string,
+    jobId: string,
+    status: string
+  ) => Promise<void>;
 };
 
 export const initialState: InitialStateProps = {
@@ -161,6 +161,7 @@ export const initialState: InitialStateProps = {
   totalApplicants: 0,
   showApplicants: false,
   toggleApplicants: () => {},
+  updateStatus: async () => {},
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -335,6 +336,25 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: TOGGLE_APPLICANTS });
   };
 
+  const updateStatus = async (
+    applicantId: string,
+    jobId: string,
+    status: string
+  ) => {
+    dispatch({ type: UPDATE_STATUS_BEGIN });
+
+    try {
+      await authFetch.patch(`/jobs/user/${applicantId}`, { status });
+
+      getApplicants(jobId);
+    } catch (error: any) {
+      dispatch({
+        type: UPDATE_STATUS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -356,6 +376,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         deleteJob,
         getApplicants,
         toggleApplicants,
+        updateStatus,
       }}
     >
       {children}
