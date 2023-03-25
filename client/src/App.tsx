@@ -27,7 +27,10 @@ function App() {
         >
           <Route index element={<AddJob />} />
           <Route path="company-jobs" element={<CompanyJobs />} />
-          <Route path="add-interview" element={<AddInterview />} />
+          <Route
+            path="add-interview/:jobId/:userId"
+            element={<AddInterview />}
+          />
           <Route path="company-interviews" element={<CompanyInterviews />} />
           <Route path="single-job/:id" element={<SingleJob />} />
           <Route

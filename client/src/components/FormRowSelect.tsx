@@ -1,9 +1,9 @@
 interface FormRowSelectProps {
   name: string;
-  value: string;
+  value: string | number;
   handleChange: React.ChangeEventHandler<HTMLSelectElement>;
   labelText?: string;
-  list: string[];
+  list: string[] | number[];
 }
 
 const FormRowSelect: React.FC<FormRowSelectProps> = ({

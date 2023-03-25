@@ -25,6 +25,9 @@ import {
   UPDATE_STATUS_BEGIN,
   UPDATE_STATUS_SUCCESS,
   UPDATE_STATUS_ERROR,
+  CREATE_INTERVIEW_BEGIN,
+  CREATE_INTERVIEW_SUCCESS,
+  CREATE_INTERVIEW_ERROR,
 } from "./actions";
 
 import { initialState, InitialStateProps, JobProps } from "./appContext";
@@ -134,6 +137,9 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       location: "",
       salary: 0,
       jobType: "full-time",
+      message: "",
+      date: "",
+      time: 15,
     };
   }
   if (action.type === GET_ALL_JOBS_BEGIN) {
@@ -198,6 +204,27 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
     return { ...state, isLoading: true };
   }
   if (action.type === UPDATE_STATUS_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
+  }
+  if (action.type === CREATE_INTERVIEW_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === CREATE_INTERVIEW_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "success",
+      alertText: "Successful! Interview created!",
+    };
+  }
+  if (action.type === CREATE_INTERVIEW_ERROR) {
     return {
       ...state,
       isLoading: false,

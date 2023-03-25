@@ -18,12 +18,6 @@ const links = [
   },
   {
     id: 3,
-    text: "Add interview",
-    path: "add-interview",
-    icon: <FaWpforms />,
-  },
-  {
-    id: 4,
     text: "interviews",
     path: "company-interviews",
     icon: <ImProfile />,

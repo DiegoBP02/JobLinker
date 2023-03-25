@@ -124,7 +124,13 @@ const SingleApplication = () => {
           </button>
         </section>
         <footer>
-          <Link className="btn" to={`/single-job/${job}`}>
+          <Link
+            className="btn widthFix mt"
+            to={`/add-interview/${job}/${user._id}`}
+          >
+            Create Interview
+          </Link>
+          <Link className="btn widthFix mt" to={`/single-job/${job}`}>
             Back to job
           </Link>
         </footer>
@@ -192,7 +198,14 @@ const Wrapper = styled.section`
   footer {
     margin-top: 1rem;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    place-items: center;
+  }
+  .widthFix {
+    width: fit-content;
+  }
+  .mt {
+    margin-top: 1rem;
   }
 `;
 

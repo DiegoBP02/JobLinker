@@ -2,6 +2,9 @@ import React, { useState, useReducer, useContext, useEffect } from "react";
 import {
   CLEAR_ALERT,
   CLEAR_VALUES,
+  CREATE_INTERVIEW_BEGIN,
+  CREATE_INTERVIEW_ERROR,
+  CREATE_INTERVIEW_SUCCESS,
   CREATE_JOB_BEGIN,
   CREATE_JOB_ERROR,
   CREATE_JOB_SUCCESS,
@@ -25,10 +28,10 @@ import {
   TOGGLE_SIDEBAR,
   UPDATE_STATUS_BEGIN,
   UPDATE_STATUS_ERROR,
-  UPDATE_STATUS_SUCCESS,
 } from "./actions";
 import reducer, { ActionType } from "./reducer";
 import axios from "axios";
+import moment from "moment";
 
 type User = {
   fullName: string;
@@ -126,6 +129,10 @@ export type InitialStateProps = {
     jobId: string,
     status: string
   ) => Promise<void>;
+  message: string;
+  date: string;
+  createInterview: (userId: string, jobId: string) => Promise<void>;
+  time: number;
 };
 
 export const initialState: InitialStateProps = {
@@ -162,6 +169,10 @@ export const initialState: InitialStateProps = {
   showApplicants: false,
   toggleApplicants: () => {},
   updateStatus: async () => {},
+  message: "",
+  date: "",
+  createInterview: async () => {},
+  time: 16,
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -355,6 +366,34 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
+  const createInterview = async (userId: string, jobId: string) => {
+    dispatch({ type: CREATE_INTERVIEW_BEGIN });
+
+    try {
+      const formattedDate = moment(state.date, "YYYY/MM/DD")
+        .hours(state.time)
+        .toISOString();
+
+      const formattedData = {
+        message: state.message,
+        date: formattedDate,
+        user: userId,
+        job: jobId,
+      };
+
+      await authFetch.post("/interview", formattedData);
+
+      dispatch({ type: CREATE_INTERVIEW_SUCCESS });
+      clearValues();
+    } catch (error: any) {
+      dispatch({
+        type: CREATE_INTERVIEW_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -377,6 +416,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         getApplicants,
         toggleApplicants,
         updateStatus,
+        createInterview,
       }}
     >
       {children}
