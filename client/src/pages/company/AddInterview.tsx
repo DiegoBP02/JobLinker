@@ -17,7 +17,7 @@ const AddInterview = () => {
     displayAlert,
     isLoading,
     clearValues,
-    getJobs,
+    getCompanyJobs,
     message,
     date,
     time,
@@ -59,7 +59,7 @@ const AddInterview = () => {
   };
 
   useEffect(() => {
-    getJobs();
+    getCompanyJobs();
     clearValues();
   }, []);
 

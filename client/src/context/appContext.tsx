@@ -20,9 +20,9 @@ import {
   GET_ALL_INTERVIEWS_BEGIN,
   GET_ALL_INTERVIEWS_ERROR,
   GET_ALL_INTERVIEWS_SUCCESS,
-  GET_ALL_JOBS_BEGIN,
-  GET_ALL_JOBS_ERROR,
-  GET_ALL_JOBS_SUCCESS,
+  GET_ALL_COMPANY_JOBS_BEGIN,
+  GET_ALL_COMPANY_JOBS_ERROR,
+  GET_ALL_COMPANY_JOBS_SUCCESS,
   GET_APPLICANTS_BEGIN,
   GET_APPLICANTS_ERROR,
   GET_APPLICANTS_SUCCESS,
@@ -38,6 +38,9 @@ import {
   TOGGLE_SIDEBAR,
   UPDATE_STATUS_BEGIN,
   UPDATE_STATUS_ERROR,
+  GET_ALL_JOBS_BEGIN,
+  GET_ALL_JOBS_SUCCESS,
+  GET_ALL_JOBS_ERROR,
 } from "./actions";
 import reducer, { ActionType } from "./reducer";
 import axios from "axios";
@@ -152,7 +155,7 @@ export type InitialStateProps = {
   company: string;
   createJob: () => void;
   clearValues: () => void;
-  getJobs: () => void;
+  getCompanyJobs: () => void;
   jobs: JobProps[] | null;
   totalJobs: number;
   deleteJob: (id: string) => Promise<void>;
@@ -179,6 +182,7 @@ export type InitialStateProps = {
   editInterview: () => Promise<void>;
   isEditingInterview: boolean;
   editInterviewId: string;
+  getAllJobs: () => Promise<void>;
 };
 
 export const initialState: InitialStateProps = {
@@ -205,7 +209,7 @@ export const initialState: InitialStateProps = {
   company: "",
   createJob: () => {},
   clearValues: () => {},
-  getJobs: () => {},
+  getCompanyJobs: () => {},
   jobs: null,
   totalJobs: 0,
   deleteJob: async () => {},
@@ -228,6 +232,7 @@ export const initialState: InitialStateProps = {
   editInterview: async () => {},
   isEditingInterview: false,
   editInterviewId: "",
+  getAllJobs: async () => {},
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -349,17 +354,20 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: CLEAR_VALUES });
   };
 
-  const getJobs = async () => {
-    dispatch({ type: GET_ALL_JOBS_BEGIN });
+  const getCompanyJobs = async () => {
+    dispatch({ type: GET_ALL_COMPANY_JOBS_BEGIN });
 
     try {
       const { user } = state;
       const { data } = await authFetch.get(`/jobs/company/${user?.userId}`);
       const { jobs, totalCount: totalJobs } = data;
-      dispatch({ type: GET_ALL_JOBS_SUCCESS, payload: { jobs, totalJobs } });
+      dispatch({
+        type: GET_ALL_COMPANY_JOBS_SUCCESS,
+        payload: { jobs, totalJobs },
+      });
     } catch (error: any) {
       dispatch({
-        type: GET_ALL_JOBS_ERROR,
+        type: GET_ALL_COMPANY_JOBS_ERROR,
         payload: { msg: error.response.data.msg },
       });
     }
@@ -370,7 +378,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
     try {
       await authFetch.delete(`/jobs/${id}`);
-      getJobs();
+      getCompanyJobs();
     } catch (error: any) {
       dispatch({
         type: DELETE_JOB_ERROR,
@@ -516,6 +524,26 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: CLEAR_APPLICANTS });
   };
 
+  const getAllJobs = async () => {
+    dispatch({ type: GET_ALL_JOBS_BEGIN });
+
+    try {
+      const { data } = await authFetch.get("jobs");
+      const { jobs, totalCount } = data;
+
+      dispatch({
+        type: GET_ALL_JOBS_SUCCESS,
+        payload: { jobs, totalJobs: totalCount },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_ALL_JOBS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert();
+    }
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -533,7 +561,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         handleChange,
         createJob,
         clearValues,
-        getJobs,
+        getCompanyJobs,
         deleteJob,
         getApplicants,
         toggleApplicants,
@@ -544,6 +572,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         clearApplicants,
         setEditInterview,
         editInterview,
+        getAllJobs,
       }}
     >
       {children}

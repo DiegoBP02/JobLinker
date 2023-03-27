@@ -12,17 +12,19 @@ import {
   SingleJob,
   SingleApplication,
   Unauthorized,
+  GetAllJobs,
 } from "./pages";
 import Dashboard from "./pages/Dashboard";
 import Authorization from "./utils/Authorization";
 
 const Company = Authorization(["company", "admin"]);
 const CompanyAddJob = Company(AddJob);
-const CompanyAllJobs = Company(CompanyJobs);
 const CompanyAddInterview = Company(AddInterview);
 const CompanyAllInterviews = Company(CompanyInterviews);
-const CompanySingleJob = Company(SingleJob);
 const CompanySingleApplication = Company(SingleApplication);
+
+const User = Authorization(["user", "admin"]);
+const UserAllJobs = User(GetAllJobs);
 
 function App() {
   return (
@@ -37,9 +39,9 @@ function App() {
           }
         >
           <>
+            {/* company routes */}
             <Route index element={<Dashboard />} />
             <Route path="add-job" element={<CompanyAddJob />} />
-            <Route path="company-jobs" element={<CompanyAllJobs />} />
             <Route
               path="add-interview/:jobId/:userId"
               element={<CompanyAddInterview />}
@@ -48,11 +50,16 @@ function App() {
               path="company-interviews"
               element={<CompanyAllInterviews />}
             />
-            <Route path="single-job/:id" element={<CompanySingleJob />} />
             <Route
               path="single-application/:id"
               element={<CompanySingleApplication />}
             />
+            {/* no authorization */}
+            <Route path="single-job/:id" element={<SingleJob />} />
+            <Route path="company-jobs" element={<CompanyJobs />} />
+
+            {/* user routes */}
+            <Route path="/all-jobs" element={<UserAllJobs />} />
           </>
         </Route>
 

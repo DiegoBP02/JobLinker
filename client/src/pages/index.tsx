@@ -10,7 +10,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Register from "./Register";
 import SharedLayout from "./SharedLayout";
 import Unauthorized from "./Unauthorized";
-
+import GetAllJobs from "./User/GetAllJobs";
 export {
   Error,
   Landing,
@@ -24,4 +24,5 @@ export {
   SingleJob,
   SingleApplication,
   Unauthorized,
+  GetAllJobs,
 };

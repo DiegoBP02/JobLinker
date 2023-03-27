@@ -4,18 +4,10 @@ import { Alert, Job, Loading } from "../../components";
 import { useAppContext } from "../../context/appContext";
 
 const CompanyJobs = () => {
-  const {
-    showAlert,
-    getCompanyJobs,
-    totalJobs,
-    jobs,
-    isLoading,
-    clearApplicants,
-  } = useAppContext();
+  const { showAlert, getAllJobs, totalJobs, jobs, isLoading } = useAppContext();
 
   useEffect(() => {
-    clearApplicants();
-    getCompanyJobs();
+    getAllJobs();
   }, []);
 
   if (isLoading) {

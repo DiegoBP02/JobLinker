@@ -14,9 +14,9 @@ import {
   CREATE_JOB_SUCCESS,
   CREATE_JOB_ERROR,
   CLEAR_VALUES,
-  GET_ALL_JOBS_BEGIN,
-  GET_ALL_JOBS_SUCCESS,
-  GET_ALL_JOBS_ERROR,
+  GET_ALL_COMPANY_JOBS_BEGIN,
+  GET_ALL_COMPANY_JOBS_SUCCESS,
+  GET_ALL_COMPANY_JOBS_ERROR,
   DELETE_JOB_BEGIN,
   DELETE_JOB_ERROR,
   GET_APPLICANTS_BEGIN,
@@ -38,6 +38,9 @@ import {
   EDIT_INTERVIEW_BEGIN,
   EDIT_INTERVIEW_ERROR,
   EDIT_INTERVIEW_SUCCESS,
+  GET_ALL_JOBS_BEGIN,
+  GET_ALL_JOBS_ERROR,
+  GET_ALL_JOBS_SUCCESS,
 } from "./actions";
 
 import {
@@ -159,10 +162,10 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       editInterviewId: "",
     };
   }
-  if (action.type === GET_ALL_JOBS_BEGIN) {
+  if (action.type === GET_ALL_COMPANY_JOBS_BEGIN) {
     return { ...state, isLoading: true };
   }
-  if (action.type === GET_ALL_JOBS_SUCCESS) {
+  if (action.type === GET_ALL_COMPANY_JOBS_SUCCESS) {
     return {
       ...state,
       isLoading: false,
@@ -170,7 +173,7 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       totalJobs: action.payload.totalJobs,
     };
   }
-  if (action.type === GET_ALL_JOBS_ERROR) {
+  if (action.type === GET_ALL_COMPANY_JOBS_ERROR) {
     return {
       ...state,
       isLoading: false,
@@ -250,7 +253,6 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       alertText: action.payload.msg,
     };
   }
-
   if (action.type === GET_ALL_INTERVIEWS_BEGIN) {
     return { ...state, isLoading: true };
   }
@@ -326,6 +328,28 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       showAlert: true,
       alertType: "danger",
       alertText: action.payload.msg,
+    };
+  }
+  if (action.type === GET_ALL_JOBS_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === GET_ALL_JOBS_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      jobs: action.payload.jobs,
+      totalJobs: action.payload.totalJobs,
+    };
+  }
+  if (action.type === GET_ALL_JOBS_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+      jobs: [],
+      totalJobs: 0,
     };
   }
   throw new Error(`No such action :${action.type}`);

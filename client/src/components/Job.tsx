@@ -1,14 +1,20 @@
 import moment from "moment";
-import { FaLocationArrow, FaBriefcase, FaCalendarAlt } from "react-icons/fa";
+import {
+  FaLocationArrow,
+  FaBriefcase,
+  FaCalendarAlt,
+  FaDollarSign,
+} from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { JobProps, useAppContext } from "../context/appContext";
+import { JobProps, useAppContext, User } from "../context/appContext";
 import Wrapper from "../assets/wrappers/Job";
 import JobInfo from "./JobInfo";
 
 const Job: React.FC<JobProps> = (job) => {
-  const { deleteJob } = useAppContext();
+  const { deleteJob, user } = useAppContext();
+  const { role } = user as User;
 
-  const { company, position, location, createdAt, type, _id } = job;
+  const { company, position, location, createdAt, type, salary, _id } = job;
 
   let date = moment(createdAt).format("MMM Do, YYYY");
 
@@ -26,18 +32,21 @@ const Job: React.FC<JobProps> = (job) => {
           <JobInfo icon={<FaLocationArrow />} text={location} />
           <JobInfo icon={<FaCalendarAlt />} text={date} />
           <JobInfo icon={<FaBriefcase />} text={type} />
+          <JobInfo icon={<FaDollarSign />} text={salary} />
         </div>
         <footer>
           <div className="actions">
-            <span>
-              <button
-                type="button"
-                className="btn delete-btn"
-                onClick={() => deleteJob(_id)}
-              >
-                Delete
-              </button>
-            </span>
+            {role === "company" || role === "admin" ? (
+              <span>
+                <button
+                  type="button"
+                  className="btn delete-btn"
+                  onClick={() => deleteJob(_id)}
+                >
+                  Delete
+                </button>
+              </span>
+            ) : null}
             <span>
               <Link
                 type="button"

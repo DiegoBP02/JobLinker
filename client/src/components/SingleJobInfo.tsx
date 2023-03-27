@@ -9,10 +9,11 @@ import {
 import { Link, useParams } from "react-router-dom";
 import Wrapper from "../assets/wrappers/SingleJobInfo";
 import JobInfo from "../components/JobInfo";
-import { JobProps, useAppContext } from "../context/appContext";
+import { JobProps, useAppContext, User } from "../context/appContext";
 
 const SingleJobInfo = () => {
-  const { deleteJob, jobs } = useAppContext();
+  const { deleteJob, jobs, user } = useAppContext();
+  const { role } = user as User;
   const { id } = useParams();
 
   const job = jobs?.find((job) => job._id === id) as JobProps;
@@ -38,18 +39,20 @@ const SingleJobInfo = () => {
           <JobInfo icon={<FaDollarSign />} text={salary} />
           <JobInfo icon={<FaInfoCircle />} text={description} />
         </div>
-        <footer>
-          <div className="actions">
-            <Link
-              type="button"
-              className="btn delete-btn"
-              onClick={() => deleteJob(id || "")}
-              to="/"
-            >
-              Delete
-            </Link>
-          </div>
-        </footer>
+        {role === "company" || role === "admin" ? (
+          <footer>
+            <div className="actions">
+              <Link
+                type="button"
+                className="btn delete-btn"
+                onClick={() => deleteJob(id || "")}
+                to="/"
+              >
+                Delete
+              </Link>
+            </div>
+          </footer>
+        ) : null}
       </div>
     </Wrapper>
   );

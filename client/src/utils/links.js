@@ -5,7 +5,7 @@ import { ImProfile } from "react-icons/im";
 const companyLinks = [
   {
     id: 1,
-    text: "Dashboard",
+    text: "dashboard",
     path: "/",
     icon: <IoBarChartSharp />,
   },
@@ -32,9 +32,15 @@ const companyLinks = [
 const userLinks = [
   {
     id: 1,
+    text: "dashboard",
+    path: "/",
+    icon: <IoBarChartSharp />,
+  },
+  {
+    id: 1,
     text: "all jobs",
     path: "/all-jobs",
-    icon: <IoBarChartSharp />,
+    icon: <MdQueryStats />,
   },
 ];
 
