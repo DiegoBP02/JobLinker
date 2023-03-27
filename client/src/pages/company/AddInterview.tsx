@@ -25,6 +25,8 @@ const AddInterview = () => {
     handleChange,
     createInterview,
     clearAlert,
+    isEditingInterview,
+    editInterview,
   } = useAppContext();
 
   const arr = [];
@@ -37,6 +39,11 @@ const AddInterview = () => {
 
     if (!message || !date) {
       displayAlert();
+      return;
+    }
+
+    if (isEditingInterview) {
+      editInterview();
       return;
     }
 
@@ -54,6 +61,7 @@ const AddInterview = () => {
 
   useEffect(() => {
     getJobs();
+    clearValues();
   }, []);
 
   return (
@@ -97,7 +105,7 @@ const AddInterview = () => {
               type="submit"
               onClick={handleSubmit}
             >
-              submit
+              {isEditingInterview ? "edit" : "submit"}
             </button>
             <button
               className="btn btn-block clear-btn"

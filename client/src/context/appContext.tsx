@@ -1,6 +1,7 @@
 import React, { useState, useReducer, useContext, useEffect } from "react";
 import {
   CLEAR_ALERT,
+  CLEAR_APPLICANTS,
   CLEAR_VALUES,
   CREATE_INTERVIEW_BEGIN,
   CREATE_INTERVIEW_ERROR,
@@ -8,9 +9,17 @@ import {
   CREATE_JOB_BEGIN,
   CREATE_JOB_ERROR,
   CREATE_JOB_SUCCESS,
+  DELETE_INTERVIEW_BEGIN,
+  DELETE_INTERVIEW_ERROR,
   DELETE_JOB_BEGIN,
   DELETE_JOB_ERROR,
   DISPLAY_ALERT,
+  EDIT_INTERVIEW_BEGIN,
+  EDIT_INTERVIEW_ERROR,
+  EDIT_INTERVIEW_SUCCESS,
+  GET_ALL_INTERVIEWS_BEGIN,
+  GET_ALL_INTERVIEWS_ERROR,
+  GET_ALL_INTERVIEWS_SUCCESS,
   GET_ALL_JOBS_BEGIN,
   GET_ALL_JOBS_ERROR,
   GET_ALL_JOBS_SUCCESS,
@@ -24,6 +33,7 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_ERROR,
   SETUP_USER_SUCCESS,
+  SET_EDIT_INTERVIEW,
   TOGGLE_APPLICANTS,
   TOGGLE_SIDEBAR,
   UPDATE_STATUS_BEGIN,
@@ -87,6 +97,33 @@ export type ApplicantProps = {
   updatedAt: string;
 };
 
+export type InterviewProps = {
+  _id: string;
+  position: string;
+  companyId: {
+    _id: string;
+    fullName: string;
+    email: string;
+  };
+  message: string;
+  status: string;
+  date: string;
+  user: {
+    _id: string;
+    fullName: string;
+    email: string;
+  };
+  job: {
+    _id: string;
+    position: string;
+    location: string;
+    salary: number;
+    type: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type InitialStateProps = {
   isLoading: boolean;
   showAlert: boolean;
@@ -133,6 +170,15 @@ export type InitialStateProps = {
   date: string;
   createInterview: (userId: string, jobId: string) => Promise<void>;
   time: number;
+  interviews: InterviewProps[] | null;
+  totalInterviews: number;
+  getInterviews: () => Promise<void>;
+  deleteInterview: (id: string) => Promise<void>;
+  clearApplicants: () => void;
+  setEditInterview: (id: string) => void;
+  editInterview: () => Promise<void>;
+  isEditingInterview: boolean;
+  editInterviewId: string;
 };
 
 export const initialState: InitialStateProps = {
@@ -173,6 +219,15 @@ export const initialState: InitialStateProps = {
   date: "",
   createInterview: async () => {},
   time: 16,
+  interviews: [],
+  totalInterviews: 0,
+  getInterviews: async () => {},
+  deleteInterview: async () => {},
+  clearApplicants: () => {},
+  setEditInterview: () => {},
+  editInterview: async () => {},
+  isEditingInterview: false,
+  editInterviewId: "",
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -394,6 +449,73 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
+  const getInterviews = async () => {
+    dispatch({ type: GET_ALL_INTERVIEWS_BEGIN });
+
+    try {
+      const { data } = await authFetch.get("/interview/company");
+      const { interviews, totalCount: totalInterviews } = data;
+
+      dispatch({
+        type: GET_ALL_INTERVIEWS_SUCCESS,
+        payload: { interviews, totalInterviews },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_ALL_INTERVIEWS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert();
+    }
+  };
+
+  const setEditInterview = (id: string) => {
+    dispatch({ type: SET_EDIT_INTERVIEW, payload: { id } });
+  };
+
+  const editInterview = async () => {
+    dispatch({ type: EDIT_INTERVIEW_BEGIN });
+    const { message, date, time, editInterviewId } = state;
+
+    const formattedDate = moment(date, "YYYY/MM/DD").hours(time).toISOString();
+
+    try {
+      await authFetch.patch(`/interview/${editInterviewId}`, {
+        message,
+        date: formattedDate,
+      });
+
+      dispatch({ type: EDIT_INTERVIEW_SUCCESS });
+      clearAlert();
+      clearValues();
+    } catch (error: any) {
+      dispatch({
+        type: EDIT_INTERVIEW_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert();
+      clearValues();
+    }
+  };
+
+  const deleteInterview = async (id: string) => {
+    dispatch({ type: DELETE_INTERVIEW_BEGIN });
+
+    try {
+      await authFetch.delete(`/interview/${id}`);
+      getInterviews();
+    } catch (error: any) {
+      dispatch({
+        type: DELETE_INTERVIEW_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+  };
+
+  const clearApplicants = () => {
+    dispatch({ type: CLEAR_APPLICANTS });
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -417,6 +539,11 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         toggleApplicants,
         updateStatus,
         createInterview,
+        getInterviews,
+        deleteInterview,
+        clearApplicants,
+        setEditInterview,
+        editInterview,
       }}
     >
       {children}

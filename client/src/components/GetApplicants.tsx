@@ -35,9 +35,7 @@ const GetApplicants = () => {
       ) : (
         showApplicants && (
           <section>
-            <h5>
-              {totalApplicants} applicant{applicants?.length && "s"} found
-            </h5>
+            <h5>{totalApplicants} applicants found</h5>
             <div className="applicants">
               {applicants?.map((applicant) => {
                 return <Applicant {...applicant} key={applicant._id} />;

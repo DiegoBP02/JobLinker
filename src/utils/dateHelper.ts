@@ -2,6 +2,7 @@ import moment from "moment";
 import { Interview } from "../models/Interview";
 
 const isInterviewDateTimeValid = (date: Date): boolean => {
+  console.log(date);
   const currentDate = moment().add(1, "day").toDate();
 
   if (moment(date).isBefore(moment(currentDate))) {

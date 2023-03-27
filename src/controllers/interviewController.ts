@@ -131,6 +131,10 @@ const getAllCompanyInterviews = async (req: Request, res: Response) => {
     .populate({
       path: "job",
       select: "position location salary type",
+    })
+    .populate({
+      path: "user",
+      select: "fullName email",
     });
 
   if (interviews.length === 0) {

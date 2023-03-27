@@ -1,3 +1,4 @@
+import moment from "moment";
 import {
   DISPLAY_ALERT,
   CLEAR_ALERT,
@@ -23,14 +24,28 @@ import {
   GET_APPLICANTS_ERROR,
   TOGGLE_APPLICANTS,
   UPDATE_STATUS_BEGIN,
-  UPDATE_STATUS_SUCCESS,
   UPDATE_STATUS_ERROR,
   CREATE_INTERVIEW_BEGIN,
   CREATE_INTERVIEW_SUCCESS,
   CREATE_INTERVIEW_ERROR,
+  GET_ALL_INTERVIEWS_BEGIN,
+  GET_ALL_INTERVIEWS_SUCCESS,
+  GET_ALL_INTERVIEWS_ERROR,
+  DELETE_INTERVIEW_BEGIN,
+  DELETE_INTERVIEW_ERROR,
+  CLEAR_APPLICANTS,
+  SET_EDIT_INTERVIEW,
+  EDIT_INTERVIEW_BEGIN,
+  EDIT_INTERVIEW_ERROR,
+  EDIT_INTERVIEW_SUCCESS,
 } from "./actions";
 
-import { initialState, InitialStateProps, JobProps } from "./appContext";
+import {
+  initialState,
+  InitialStateProps,
+  InterviewProps,
+  JobProps,
+} from "./appContext";
 
 export type ActionType = {
   type: string;
@@ -140,6 +155,8 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       message: "",
       date: "",
       time: 15,
+      isEditingInterview: false,
+      editInterviewId: "",
     };
   }
   if (action.type === GET_ALL_JOBS_BEGIN) {
@@ -225,6 +242,84 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
     };
   }
   if (action.type === CREATE_INTERVIEW_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
+  }
+
+  if (action.type === GET_ALL_INTERVIEWS_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === GET_ALL_INTERVIEWS_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      interviews: action.payload.interviews,
+      totalInterviews: action.payload.totalInterviews,
+    };
+  }
+  if (action.type === GET_ALL_INTERVIEWS_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+      interviews: [],
+      totalInterviews: 0,
+    };
+  }
+  if (action.type === DELETE_INTERVIEW_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === DELETE_INTERVIEW_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
+  }
+  if (action.type === CLEAR_APPLICANTS) {
+    return {
+      ...state,
+      applicants: [],
+      totalApplicants: 0,
+      showApplicants: false,
+    };
+  }
+  if (action.type === SET_EDIT_INTERVIEW) {
+    const interview = state.interviews?.find(
+      (int) => int._id === action.payload.id
+    );
+    const { _id, message, date } = interview as InterviewProps;
+    const formattedDate = moment(date).format("YYYY-MM-DD");
+    return {
+      ...state,
+      isEditingInterview: true,
+      editInterviewId: _id,
+      message,
+      date: formattedDate,
+    };
+  }
+  if (action.type === EDIT_INTERVIEW_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === EDIT_INTERVIEW_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "success",
+      alertText: "Successful! Interview updated!",
+    };
+  }
+  if (action.type === EDIT_INTERVIEW_ERROR) {
     return {
       ...state,
       isLoading: false,

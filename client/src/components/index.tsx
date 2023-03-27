@@ -9,6 +9,8 @@ import NavLinks from "./NavLinks";
 import SmallSidebar from "./SmallSidebar";
 import Job from "./Job";
 import Applicant from "./Applicant";
+import Interview from "./Interview";
+
 export {
   Loading,
   Logo,
@@ -21,4 +23,5 @@ export {
   FormRowSelect,
   Job,
   Applicant,
+  Interview,
 };
