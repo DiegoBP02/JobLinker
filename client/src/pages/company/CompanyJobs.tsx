@@ -11,11 +11,14 @@ const CompanyJobs = () => {
     jobs,
     isLoading,
     clearApplicants,
+    companyId,
   } = useAppContext();
+
+  const companyIdTwo = companyId ? companyId : "";
 
   useEffect(() => {
     clearApplicants();
-    getCompanyJobs();
+    getCompanyJobs(companyIdTwo);
   }, []);
 
   if (isLoading) {

@@ -41,3 +41,4 @@ export const EDIT_INTERVIEW_ERROR: string = "EDIT_INTERVIEW_ERROR";
 export const GET_ALL_JOBS_BEGIN: string = "GET_ALL_JOBS_BEGIN";
 export const GET_ALL_JOBS_SUCCESS: string = "GET_ALL_JOBS_SUCCESS";
 export const GET_ALL_JOBS_ERROR: string = "GET_ALL_JOBS_ERROR";
+export const SET_COMPANY_ID: string = "SET_COMPANY_ID";

@@ -41,6 +41,7 @@ import {
   GET_ALL_JOBS_BEGIN,
   GET_ALL_JOBS_ERROR,
   GET_ALL_JOBS_SUCCESS,
+  SET_COMPANY_ID,
 } from "./actions";
 
 import {
@@ -160,6 +161,7 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       time: 15,
       isEditingInterview: false,
       editInterviewId: "",
+      companyId: "",
     };
   }
   if (action.type === GET_ALL_COMPANY_JOBS_BEGIN) {
@@ -351,6 +353,9 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       jobs: [],
       totalJobs: 0,
     };
+  }
+  if (action.type === SET_COMPANY_ID) {
+    return { ...state, companyId: action.payload.companyId };
   }
   throw new Error(`No such action :${action.type}`);
 };

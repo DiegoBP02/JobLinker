@@ -41,6 +41,7 @@ import {
   GET_ALL_JOBS_BEGIN,
   GET_ALL_JOBS_SUCCESS,
   GET_ALL_JOBS_ERROR,
+  SET_COMPANY_ID,
 } from "./actions";
 import reducer, { ActionType } from "./reducer";
 import axios from "axios";
@@ -62,6 +63,7 @@ export type JobProps = {
   _id: string;
   type: string;
   key: any;
+  companyId: string;
 };
 
 export type ApplicantProps = {
@@ -155,7 +157,7 @@ export type InitialStateProps = {
   company: string;
   createJob: () => void;
   clearValues: () => void;
-  getCompanyJobs: () => void;
+  getCompanyJobs: (company?: string) => void;
   jobs: JobProps[] | null;
   totalJobs: number;
   deleteJob: (id: string) => Promise<void>;
@@ -183,6 +185,8 @@ export type InitialStateProps = {
   isEditingInterview: boolean;
   editInterviewId: string;
   getAllJobs: () => Promise<void>;
+  companyId: string;
+  setCompanyId: (companyId: string) => void;
 };
 
 export const initialState: InitialStateProps = {
@@ -233,6 +237,8 @@ export const initialState: InitialStateProps = {
   isEditingInterview: false,
   editInterviewId: "",
   getAllJobs: async () => {},
+  companyId: "",
+  setCompanyId: () => {},
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -354,12 +360,14 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: CLEAR_VALUES });
   };
 
-  const getCompanyJobs = async () => {
+  const getCompanyJobs = async (company?: string) => {
     dispatch({ type: GET_ALL_COMPANY_JOBS_BEGIN });
 
+    const { user } = state;
+    const companyId = company ? company : user?.userId;
+
     try {
-      const { user } = state;
-      const { data } = await authFetch.get(`/jobs/company/${user?.userId}`);
+      const { data } = await authFetch.get(`/jobs/company/${companyId}`);
       const { jobs, totalCount: totalJobs } = data;
       dispatch({
         type: GET_ALL_COMPANY_JOBS_SUCCESS,
@@ -544,6 +552,10 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
+  const setCompanyId = (companyId: string) => {
+    dispatch({ type: SET_COMPANY_ID, payload: { companyId } });
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -573,6 +585,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         setEditInterview,
         editInterview,
         getAllJobs,
+        setCompanyId,
       }}
     >
       {children}

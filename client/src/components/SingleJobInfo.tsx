@@ -12,13 +12,21 @@ import JobInfo from "../components/JobInfo";
 import { JobProps, useAppContext, User } from "../context/appContext";
 
 const SingleJobInfo = () => {
-  const { deleteJob, jobs, user } = useAppContext();
+  const { deleteJob, jobs, user, setCompanyId } = useAppContext();
   const { role } = user as User;
   const { id } = useParams();
 
   const job = jobs?.find((job) => job._id === id) as JobProps;
-  const { company, position, salary, description, location, createdAt, type } =
-    job;
+  const {
+    company,
+    position,
+    salary,
+    description,
+    location,
+    createdAt,
+    type,
+    companyId,
+  } = job;
 
   let date = moment(createdAt).format("MMM Do, YYYY");
 
@@ -28,7 +36,9 @@ const SingleJobInfo = () => {
         <div className="main-icon">{position.charAt(0)}</div>
         <div className="info">
           <h5>{position}</h5>
-          <p>{company}</p>
+          <Link to="/company-jobs" onClick={() => setCompanyId(companyId)}>
+            {company}
+          </Link>
         </div>
       </header>
       <div className="content">
@@ -39,8 +49,8 @@ const SingleJobInfo = () => {
           <JobInfo icon={<FaDollarSign />} text={salary} />
           <JobInfo icon={<FaInfoCircle />} text={description} />
         </div>
-        {role === "company" || role === "admin" ? (
-          <footer>
+        <footer>
+          {role === "company" || role === "admin" ? (
             <div className="actions">
               <Link
                 type="button"
@@ -51,8 +61,19 @@ const SingleJobInfo = () => {
                 Delete
               </Link>
             </div>
-          </footer>
-        ) : null}
+          ) : (
+            <div className="actions">
+              <Link
+                type="button"
+                className="btn"
+                // onClick={}
+                to={`/create-application/${job._id}`}
+              >
+                Create Application
+              </Link>
+            </div>
+          )}
+        </footer>
       </div>
     </Wrapper>
   );

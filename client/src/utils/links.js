@@ -37,7 +37,7 @@ const userLinks = [
     icon: <IoBarChartSharp />,
   },
   {
-    id: 1,
+    id: 2,
     text: "all jobs",
     path: "/all-jobs",
     icon: <MdQueryStats />,

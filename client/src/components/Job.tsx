@@ -11,10 +11,19 @@ import Wrapper from "../assets/wrappers/Job";
 import JobInfo from "./JobInfo";
 
 const Job: React.FC<JobProps> = (job) => {
-  const { deleteJob, user } = useAppContext();
+  const { deleteJob, user, setCompanyId } = useAppContext();
   const { role } = user as User;
 
-  const { company, position, location, createdAt, type, salary, _id } = job;
+  const {
+    company,
+    position,
+    location,
+    createdAt,
+    type,
+    salary,
+    _id,
+    companyId,
+  } = job;
 
   let date = moment(createdAt).format("MMM Do, YYYY");
 
@@ -24,7 +33,9 @@ const Job: React.FC<JobProps> = (job) => {
         <div className="main-icon">{position.charAt(0)}</div>
         <div className="info">
           <h5>{position}</h5>
-          <p>{company}</p>
+          <Link to="/company-jobs" onClick={() => setCompanyId(companyId)}>
+            {company}
+          </Link>
         </div>
       </header>
       <div className="content">
