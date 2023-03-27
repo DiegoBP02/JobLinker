@@ -44,7 +44,7 @@ const SingleJobInfo = () => {
               type="button"
               className="btn delete-btn"
               onClick={() => deleteJob(id || "")}
-              to="/company-jobs"
+              to="/"
             >
               Delete
             </Link>

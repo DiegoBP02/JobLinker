@@ -43,7 +43,7 @@ import reducer, { ActionType } from "./reducer";
 import axios from "axios";
 import moment from "moment";
 
-type User = {
+export type User = {
   fullName: string;
   userId: string;
   role: string;

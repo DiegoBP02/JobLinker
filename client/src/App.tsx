@@ -11,7 +11,18 @@ import {
   CompanyInterviews,
   SingleJob,
   SingleApplication,
+  Unauthorized,
 } from "./pages";
+import Dashboard from "./pages/Dashboard";
+import Authorization from "./utils/Authorization";
+
+const Company = Authorization(["company", "admin"]);
+const CompanyAddJob = Company(AddJob);
+const CompanyAllJobs = Company(CompanyJobs);
+const CompanyAddInterview = Company(AddInterview);
+const CompanyAllInterviews = Company(CompanyInterviews);
+const CompanySingleJob = Company(SingleJob);
+const CompanySingleApplication = Company(SingleApplication);
 
 function App() {
   return (
@@ -25,21 +36,29 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<AddJob />} />
-          <Route path="company-jobs" element={<CompanyJobs />} />
-          <Route
-            path="add-interview/:jobId/:userId"
-            element={<AddInterview />}
-          />
-          <Route path="company-interviews" element={<CompanyInterviews />} />
-          <Route path="single-job/:id" element={<SingleJob />} />
-          <Route
-            path="single-application/:id"
-            element={<SingleApplication />}
-          />
+          <>
+            <Route index element={<Dashboard />} />
+            <Route path="add-job" element={<CompanyAddJob />} />
+            <Route path="company-jobs" element={<CompanyAllJobs />} />
+            <Route
+              path="add-interview/:jobId/:userId"
+              element={<CompanyAddInterview />}
+            />
+            <Route
+              path="company-interviews"
+              element={<CompanyAllInterviews />}
+            />
+            <Route path="single-job/:id" element={<CompanySingleJob />} />
+            <Route
+              path="single-application/:id"
+              element={<CompanySingleApplication />}
+            />
+          </>
         </Route>
+
         <Route path="/landing" element={<Landing />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </BrowserRouter>

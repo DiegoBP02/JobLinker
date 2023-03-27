@@ -1,12 +1,11 @@
 import { IoBarChartSharp } from "react-icons/io5";
 import { MdQueryStats } from "react-icons/md";
-import { FaWpforms } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
 
-const links = [
+const companyLinks = [
   {
     id: 1,
-    text: "add job",
+    text: "Dashboard",
     path: "/",
     icon: <IoBarChartSharp />,
   },
@@ -18,10 +17,25 @@ const links = [
   },
   {
     id: 3,
+    text: "add job",
+    path: "add-job",
+    icon: <ImProfile />,
+  },
+  {
+    id: 4,
     text: "interviews",
     path: "company-interviews",
     icon: <ImProfile />,
   },
 ];
 
-export default links;
+const userLinks = [
+  {
+    id: 1,
+    text: "all jobs",
+    path: "/all-jobs",
+    icon: <IoBarChartSharp />,
+  },
+];
+
+export { companyLinks, userLinks };

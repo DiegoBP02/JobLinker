@@ -7,8 +7,7 @@ type ProtectedRouteProps = {
   children: React.ReactNode;
 };
 
-// @ts-ignore
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, userLoading } = useAppContext();
 
   if (userLoading) return <Loading />;
@@ -17,7 +16,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/landing" />;
   }
 
-  return children;
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;
