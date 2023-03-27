@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import Wrapper from "../../assets/wrappers/CompanyInterviews";
 import { Alert, Interview } from "../../components";
 import { useAppContext } from "../../context/appContext";
 import { useEffect } from "react";
@@ -33,25 +33,4 @@ const CompanyInterviews = () => {
   );
 };
 
-const Wrapper = styled.section`
-  margin-top: 4rem;
-  h2 {
-    text-transform: none;
-  }
-  & > h5 {
-    font-weight: 700;
-  }
-  .interviews {
-    display: grid;
-    grid-template-columns: 1fr;
-    row-gap: 2rem;
-  }
-  @media (min-width: 992px) {
-    .interviews {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-  }
-`;
 export default CompanyInterviews;
