@@ -42,6 +42,11 @@ import {
   GET_ALL_JOBS_SUCCESS,
   GET_ALL_JOBS_ERROR,
   SET_COMPANY_ID,
+  HANDLE_ADD_CERTIFICATION,
+  HANDLE_REMOVE_CERTIFICATION,
+  CREATE_APPLICATION_BEGIN,
+  CREATE_APPLICATION_SUCCESS,
+  CREATE_APPLICATION_ERROR,
 } from "./actions";
 import reducer, { ActionType } from "./reducer";
 import axios from "axios";
@@ -187,6 +192,26 @@ export type InitialStateProps = {
   getAllJobs: () => Promise<void>;
   companyId: string;
   setCompanyId: (companyId: string) => void;
+  handleAddCertification: () => void;
+  handleCertificationChange: (index: number, value: string) => void;
+  certifications: string[];
+  handleRemoveCertification: (index: number) => void;
+  resume: string;
+  titleExperience: string;
+  companyExperience: string;
+  locationExperience: string;
+  startDateExperience: string;
+  endDateExperience: string;
+  responsibilitiesExperience: string;
+  titlePortfolio: string;
+  urlPortfolio: string;
+  degreeEducation: string;
+  instituitionEducation: string;
+  locationEducation: string;
+  graduationEducation: string;
+  status: string;
+  job: string;
+  createApplication: (jobId: string) => Promise<void>;
 };
 
 export const initialState: InitialStateProps = {
@@ -239,6 +264,26 @@ export const initialState: InitialStateProps = {
   getAllJobs: async () => {},
   companyId: "",
   setCompanyId: () => {},
+  handleAddCertification: () => {},
+  handleCertificationChange: () => {},
+  certifications: [""],
+  handleRemoveCertification: () => {},
+  resume: "",
+  titleExperience: "",
+  companyExperience: "",
+  locationExperience: "",
+  startDateExperience: "",
+  endDateExperience: "",
+  responsibilitiesExperience: "",
+  titlePortfolio: "",
+  urlPortfolio: "",
+  degreeEducation: "",
+  instituitionEducation: "",
+  locationEducation: "",
+  graduationEducation: "",
+  status: "pending",
+  job: "",
+  createApplication: async () => {},
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -556,6 +601,107 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: SET_COMPANY_ID, payload: { companyId } });
   };
 
+  const handleCertificationChange = (index: number, value: string) => {
+    dispatch({
+      type: HANDLE_ADD_CERTIFICATION,
+      payload: {
+        index,
+        value,
+      },
+    });
+  };
+
+  const handleAddCertification = () => {
+    if (state.certifications.length < 5) {
+      dispatch({
+        type: HANDLE_ADD_CERTIFICATION,
+        payload: {
+          index: state.certifications.length,
+          value: "",
+        },
+      });
+    }
+  };
+
+  const handleRemoveCertification = (index: number) => {
+    dispatch({
+      type: HANDLE_REMOVE_CERTIFICATION,
+      payload: index,
+    });
+  };
+
+  const createApplication = async (jobId: string) => {
+    dispatch({ type: CREATE_APPLICATION_BEGIN });
+
+    try {
+      const {
+        status,
+        resume,
+        titleExperience,
+        companyExperience,
+        locationExperience,
+        startDateExperience,
+        endDateExperience,
+        responsibilitiesExperience,
+        titlePortfolio,
+        urlPortfolio,
+        certifications,
+        degreeEducation,
+        instituitionEducation,
+        locationEducation,
+        graduationEducation,
+      } = state;
+
+      const formattedDate1 = moment(
+        startDateExperience,
+        "YYYY/MM/DD"
+      ).toISOString();
+      const formattedDate2 = moment(
+        endDateExperience,
+        "YYYY/MM/DD"
+      ).toISOString();
+      const formattedDate3 = moment(
+        graduationEducation,
+        "YYYY/MM/DD"
+      ).toISOString();
+
+      const formattedData = {
+        resume,
+        experience: {
+          title: titleExperience,
+          company: companyExperience,
+          location: locationExperience,
+          startDate: formattedDate1,
+          endDate: formattedDate2,
+          responsibilities: responsibilitiesExperience,
+        },
+        portfolio: {
+          title: titlePortfolio,
+          url: urlPortfolio,
+        },
+        certifications: certifications,
+        education: {
+          degree: degreeEducation,
+          instituition: instituitionEducation,
+          location: locationEducation,
+          graduation: formattedDate3,
+        },
+        job: jobId,
+        status: status,
+      };
+
+      await authFetch.post("/application", formattedData);
+
+      dispatch({ type: CREATE_APPLICATION_SUCCESS });
+    } catch (error: any) {
+      dispatch({
+        type: CREATE_APPLICATION_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -586,6 +732,10 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         editInterview,
         getAllJobs,
         setCompanyId,
+        handleAddCertification,
+        handleCertificationChange,
+        handleRemoveCertification,
+        createApplication,
       }}
     >
       {children}

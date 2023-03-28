@@ -42,14 +42,14 @@ import {
   GET_ALL_JOBS_ERROR,
   GET_ALL_JOBS_SUCCESS,
   SET_COMPANY_ID,
+  HANDLE_ADD_CERTIFICATION,
+  HANDLE_REMOVE_CERTIFICATION,
+  CREATE_APPLICATION_BEGIN,
+  CREATE_APPLICATION_SUCCESS,
+  CREATE_APPLICATION_ERROR,
 } from "./actions";
 
-import {
-  initialState,
-  InitialStateProps,
-  InterviewProps,
-  JobProps,
-} from "./appContext";
+import { initialState, InitialStateProps, InterviewProps } from "./appContext";
 
 export type ActionType = {
   type: string;
@@ -356,6 +356,39 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
   }
   if (action.type === SET_COMPANY_ID) {
     return { ...state, companyId: action.payload.companyId };
+  }
+  if (action.type === HANDLE_ADD_CERTIFICATION) {
+    const { index, value } = action.payload;
+    const updatedCertification = [...state.certifications];
+    updatedCertification[index] = value;
+    return { ...state, certifications: updatedCertification };
+  }
+  if (action.type === HANDLE_REMOVE_CERTIFICATION) {
+    const updatedCertifications = state.certifications.filter(
+      (_, i) => i !== action.payload
+    );
+    return { ...state, certifications: updatedCertifications };
+  }
+  if (action.type === CREATE_APPLICATION_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === CREATE_APPLICATION_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "success",
+      alertText: "Successful! Application created!",
+    };
+  }
+  if (action.type === CREATE_APPLICATION_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
   }
   throw new Error(`No such action :${action.type}`);
 };
