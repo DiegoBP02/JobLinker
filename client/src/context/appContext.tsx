@@ -47,6 +47,17 @@ import {
   CREATE_APPLICATION_BEGIN,
   CREATE_APPLICATION_SUCCESS,
   CREATE_APPLICATION_ERROR,
+  GET_ALL_APPLICATIONS_BEGIN,
+  GET_ALL_APPLICATIONS_SUCCESS,
+  GET_ALL_APPLICATIONS_ERROR,
+  DELETE_APPLICATION_ERROR,
+  DELETE_APPLICATION_BEGIN,
+  GET_ALL_USER_INTERVIEWS_BEGIN,
+  GET_ALL_USER_INTERVIEWS_ERROR,
+  GET_ALL_USER_INTERVIEWS_SUCCESS,
+  UPDATE_INTERVIEW_STATUS_BEGIN,
+  UPDATE_INTERVIEW_STATUS_SUCCESS,
+  UPDATE_INTERVIEW_STATUS_ERROR,
 } from "./actions";
 import reducer, { ActionType } from "./reducer";
 import axios from "axios";
@@ -134,6 +145,48 @@ export type InterviewProps = {
   updatedAt: string;
 };
 
+export type ApplicationProps = {
+  _id: string;
+  resume: string;
+  experience: {
+    title: string;
+    company: string;
+    location: string;
+    startDate: string;
+    endDate: string;
+    responsibilities: string[];
+    _id: string;
+  };
+  portfolio: {
+    title: string;
+    url: string;
+    _id: string;
+  };
+  certifications: string[];
+  education: {
+    degree: string;
+    instituition: string;
+    location: string;
+    graduation: string;
+    _id: string;
+  };
+  status: string;
+  user: {
+    _id: string;
+    fullName: string;
+  };
+  job: {
+    _id: string;
+    position: string;
+    company: string;
+    location: string;
+    salary: number;
+    type: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type InitialStateProps = {
   isLoading: boolean;
   showAlert: boolean;
@@ -212,6 +265,12 @@ export type InitialStateProps = {
   status: string;
   job: string;
   createApplication: (jobId: string) => Promise<void>;
+  applications: ApplicationProps[] | null;
+  totalApplications: number;
+  getAllApplications: () => Promise<void>;
+  deleteApplication: (id: string) => Promise<void>;
+  getAllInterviews: () => Promise<void>;
+  updateInterviewStatus: (interviewId: string, status: string) => Promise<void>;
 };
 
 export const initialState: InitialStateProps = {
@@ -284,6 +343,12 @@ export const initialState: InitialStateProps = {
   status: "pending",
   job: "",
   createApplication: async () => {},
+  applications: [],
+  totalApplications: 0,
+  getAllApplications: async () => {},
+  deleteApplication: async () => {},
+  getAllInterviews: async () => {},
+  updateInterviewStatus: async () => {},
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -581,7 +646,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch({ type: GET_ALL_JOBS_BEGIN });
 
     try {
-      const { data } = await authFetch.get("jobs");
+      const { data } = await authFetch.get("/jobs");
       const { jobs, totalCount } = data;
 
       dispatch({
@@ -702,6 +767,78 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
+  const getAllApplications = async () => {
+    dispatch({ type: GET_ALL_APPLICATIONS_BEGIN });
+
+    try {
+      const { data } = await authFetch.get("/application");
+      const { applications, totalCount } = data;
+
+      dispatch({
+        type: GET_ALL_APPLICATIONS_SUCCESS,
+        payload: { applications, totalApplications: totalCount },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_ALL_APPLICATIONS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert();
+    }
+  };
+
+  const deleteApplication = async (id: string) => {
+    dispatch({ type: DELETE_APPLICATION_BEGIN });
+
+    try {
+      await authFetch.delete(`/application/${id}`);
+      getAllApplications();
+    } catch (error: any) {
+      dispatch({
+        type: DELETE_APPLICATION_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+  };
+
+  const getAllInterviews = async () => {
+    dispatch({ type: GET_ALL_INTERVIEWS_BEGIN });
+
+    try {
+      const { data } = await authFetch.get("/interview");
+      const { interviews, totalCount } = data;
+
+      dispatch({
+        type: GET_ALL_INTERVIEWS_SUCCESS,
+        payload: { interviews, totalInterviews: totalCount },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_ALL_INTERVIEWS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert();
+    }
+  };
+
+  const updateInterviewStatus = async (interviewId: string, status: string) => {
+    dispatch({ type: UPDATE_INTERVIEW_STATUS_BEGIN });
+
+    try {
+      await authFetch.patch(`/interview/status/${interviewId}`, { status });
+
+      dispatch({ type: UPDATE_INTERVIEW_STATUS_SUCCESS });
+      getAllInterviews();
+      clearAlert();
+    } catch (error: any) {
+      dispatch({
+        type: UPDATE_INTERVIEW_STATUS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert();
+    }
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -736,6 +873,10 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         handleCertificationChange,
         handleRemoveCertification,
         createApplication,
+        getAllApplications,
+        deleteApplication,
+        getAllInterviews,
+        updateInterviewStatus,
       }}
     >
       {children}

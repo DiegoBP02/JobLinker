@@ -7,6 +7,7 @@ const checkPermission = (
   requestUser: TokenUser,
   resourceUserId: string
 ) => {
+  console.log(requestUser, resourceUserId);
   if (requestUser.role === "admin") return;
   if (requestUser.userId === resourceUserId.toString()) return;
   return res.status(401).json({ msg: "Unauthorized to access this route!" });

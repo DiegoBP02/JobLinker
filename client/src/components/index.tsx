@@ -10,6 +10,8 @@ import SmallSidebar from "./SmallSidebar";
 import Job from "./Job";
 import Applicant from "./Applicant";
 import Interview from "./Interview";
+import Application from "./Application";
+import UserInterview from "./UserInterview";
 
 export {
   Loading,
@@ -24,4 +26,6 @@ export {
   Job,
   Applicant,
   Interview,
+  Application,
+  UserInterview,
 };

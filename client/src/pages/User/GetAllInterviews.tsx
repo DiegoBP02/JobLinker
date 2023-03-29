@@ -1,14 +1,19 @@
 import Wrapper from "../../assets/wrappers/CompanyInterviews";
-import { Alert, Interview, Loading } from "../../components";
+import { Alert, Interview, Loading, UserInterview } from "../../components";
 import { useAppContext } from "../../context/appContext";
 import { useEffect } from "react";
 
-const CompanyInterviews = () => {
-  const { showAlert, interviews, totalInterviews, getInterviews, isLoading } =
-    useAppContext();
+const GetAllInterviews = () => {
+  const {
+    showAlert,
+    interviews,
+    totalInterviews,
+    getAllInterviews,
+    isLoading,
+  } = useAppContext();
 
   useEffect(() => {
-    getInterviews();
+    getAllInterviews();
   }, []);
 
   if (isLoading) {
@@ -29,7 +34,7 @@ const CompanyInterviews = () => {
       <h5>{interviews?.length} interviews found</h5>
       <div className="interviews">
         {interviews?.map((interview) => {
-          return <Interview {...interview} key={interview._id} />;
+          return <UserInterview {...interview} key={interview._id} />;
         })}
       </div>
       {/* {numOfPages > 1 && <PageBtnContainer />} */}
@@ -37,4 +42,4 @@ const CompanyInterviews = () => {
   );
 };
 
-export default CompanyInterviews;
+export default GetAllInterviews;

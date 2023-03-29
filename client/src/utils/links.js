@@ -42,6 +42,18 @@ const userLinks = [
     path: "/all-jobs",
     icon: <MdQueryStats />,
   },
+  {
+    id: 3,
+    text: "all applications",
+    path: "/all-applications",
+    icon: <MdQueryStats />,
+  },
+  {
+    id: 4,
+    text: "all interviews",
+    path: "/all-interviews",
+    icon: <MdQueryStats />,
+  },
 ];
 
 export { companyLinks, userLinks };

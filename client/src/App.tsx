@@ -13,9 +13,12 @@ import {
   SingleApplication,
   Unauthorized,
   GetAllJobs,
+  GetAllApplications,
+  GetAllInterviews,
 } from "./pages";
 import Dashboard from "./pages/Dashboard";
 import CreateApplication from "./pages/User/CreateApplication";
+import SingleInterview from "./pages/User/SingleInterview";
 import Authorization from "./utils/Authorization";
 
 const Company = Authorization(["company", "admin"]);
@@ -27,6 +30,9 @@ const CompanySingleApplication = Company(SingleApplication);
 const User = Authorization(["user", "admin"]);
 const UserAllJobs = User(GetAllJobs);
 const UserCreateApplication = User(CreateApplication);
+const UserGetAllApplication = User(GetAllApplications);
+const UserGetAllInterviews = User(GetAllInterviews);
+const UserSingleInterview = User(SingleInterview);
 
 function App() {
   return (
@@ -65,6 +71,15 @@ function App() {
             <Route
               path="/create-application/:jobId"
               element={<UserCreateApplication />}
+            />
+            <Route
+              path="/all-applications"
+              element={<UserGetAllApplication />}
+            />
+            <Route path="/all-interviews" element={<UserGetAllInterviews />} />
+            <Route
+              path="/single-interview/:id"
+              element={<UserSingleInterview />}
             />
           </>
         </Route>

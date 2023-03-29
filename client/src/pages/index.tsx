@@ -10,7 +10,10 @@ import ProtectedRoute from "./ProtectedRoute";
 import Register from "./Register";
 import SharedLayout from "./SharedLayout";
 import Unauthorized from "./Unauthorized";
+import GetAllApplications from "./User/GetAllApplications";
+import GetAllInterviews from "./User/GetAllInterviews";
 import GetAllJobs from "./User/GetAllJobs";
+
 export {
   Error,
   Landing,
@@ -25,4 +28,6 @@ export {
   SingleApplication,
   Unauthorized,
   GetAllJobs,
+  GetAllApplications,
+  GetAllInterviews,
 };
