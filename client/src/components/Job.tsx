@@ -1,4 +1,3 @@
-import moment from "moment";
 import {
   FaLocationArrow,
   FaBriefcase,
@@ -9,6 +8,7 @@ import { Link } from "react-router-dom";
 import { JobProps, useAppContext, User } from "../context/appContext";
 import Wrapper from "../assets/wrappers/Job";
 import JobInfo from "./JobInfo";
+import formatDate from "../utils/formatDate";
 
 const Job: React.FC<JobProps> = (job) => {
   const { deleteJob, user, setCompanyId } = useAppContext();
@@ -25,7 +25,7 @@ const Job: React.FC<JobProps> = (job) => {
     companyId,
   } = job;
 
-  let date = moment(createdAt).format("MMM Do, YYYY");
+  const date = formatDate(createdAt);
 
   return (
     <Wrapper>

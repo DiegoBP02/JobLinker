@@ -10,6 +10,7 @@ import { Link, useParams } from "react-router-dom";
 import Wrapper from "../assets/wrappers/SingleJobInfo";
 import JobInfo from "../components/JobInfo";
 import { JobProps, useAppContext, User } from "../context/appContext";
+import formatDate from "../utils/formatDate";
 
 const SingleJobInfo = () => {
   const { deleteJob, jobs, user, setCompanyId } = useAppContext();
@@ -28,7 +29,7 @@ const SingleJobInfo = () => {
     companyId,
   } = job;
 
-  let date = moment(createdAt).format("MMM Do, YYYY");
+  const date = formatDate(createdAt);
 
   return (
     <Wrapper>

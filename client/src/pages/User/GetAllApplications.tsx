@@ -39,7 +39,6 @@ const GetAllApplications = () => {
           return <Application {...application} key={application._id} />;
         })}
       </div>
-      {/* {numOfPages > 1 && <PageBtnContainer />} */}
     </Wrapper>
   );
 };

@@ -37,7 +37,6 @@ const GetAllInterviews = () => {
           return <UserInterview {...interview} key={interview._id} />;
         })}
       </div>
-      {/* {numOfPages > 1 && <PageBtnContainer />} */}
     </Wrapper>
   );
 };

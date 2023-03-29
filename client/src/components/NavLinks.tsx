@@ -2,8 +2,10 @@ import { companyLinks, userLinks } from "../utils/links";
 import { NavLink } from "react-router-dom";
 import { useAppContext, User } from "../context/appContext";
 
-const NavLinks = () => {
-  const { toggleSidebar, user } = useAppContext();
+const NavLinks: React.FC<{
+  toggleSidebar?: () => void;
+}> = ({ toggleSidebar }) => {
+  const { user } = useAppContext();
   const { role } = user as User;
 
   const links =
@@ -21,7 +23,7 @@ const NavLinks = () => {
               isActive ? "nav-link active" : "nav-link"
             }
             key={id}
-            // onClick={toggleSidebar}
+            onClick={toggleSidebar}
           >
             <span className="icon">{icon}</span>
             {text}

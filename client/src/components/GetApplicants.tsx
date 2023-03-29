@@ -3,6 +3,7 @@ import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/GetApplicants";
 import Applicant from "./Applicant";
 import Loading from "./Loading";
+import Alert from "./Alert";
 
 const GetApplicants = () => {
   const {
@@ -12,6 +13,7 @@ const GetApplicants = () => {
     showApplicants,
     toggleApplicants,
     isLoading,
+    showAlert,
   } = useAppContext();
   const { id } = useParams();
 
@@ -26,10 +28,10 @@ const GetApplicants = () => {
             toggleApplicants();
           }}
         >
-          {showApplicants ? "Hide Applicants" : "Get Applicants"}
+          {showApplicants ? "Hide Applicants" : "Show Applicants"}
         </button>
       </header>
-      {/* {showAlert && <Alert />} */}
+      {showAlert && <Alert />}
       {isLoading ? (
         <Loading />
       ) : (

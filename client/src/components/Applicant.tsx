@@ -1,6 +1,5 @@
 import { ApplicantProps } from "../context/appContext";
 import Wrapper from "../assets/wrappers/Applicant";
-import moment from "moment";
 import JobInfo from "./JobInfo";
 import {
   FaBriefcase,
@@ -9,11 +8,12 @@ import {
   FaUniversity,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import formatDate from "../utils/formatDate";
 
 const Applicant: React.FC<ApplicantProps> = (application) => {
   const { _id, createdAt, portfolio, education, status, user } = application;
 
-  let date = moment(createdAt).format("MMM Do, YYYY");
+  const date = formatDate(createdAt);
 
   return (
     <Wrapper>

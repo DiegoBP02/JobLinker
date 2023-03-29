@@ -1,31 +1,33 @@
-import { IoBarChartSharp } from "react-icons/io5";
-import { MdQueryStats } from "react-icons/md";
-import { ImProfile } from "react-icons/im";
+import { AiOutlineAppstoreAdd } from "react-icons/ai";
+import { SiEnterprisedb } from "react-icons/si";
+import { SlEnvolopeLetter } from "react-icons/sl";
+import { MdDashboard, MdGroupWork } from "react-icons/md";
+import { BiGroup } from "react-icons/bi";
 
 const companyLinks = [
   {
     id: 1,
     text: "dashboard",
     path: "/",
-    icon: <IoBarChartSharp />,
+    icon: <MdDashboard />,
   },
   {
     id: 2,
     text: "company jobs",
     path: "company-jobs",
-    icon: <MdQueryStats />,
+    icon: <MdGroupWork />,
   },
   {
     id: 3,
     text: "add job",
     path: "add-job",
-    icon: <ImProfile />,
+    icon: <AiOutlineAppstoreAdd />,
   },
   {
     id: 4,
     text: "interviews",
     path: "company-interviews",
-    icon: <ImProfile />,
+    icon: <SiEnterprisedb />,
   },
 ];
 
@@ -34,25 +36,25 @@ const userLinks = [
     id: 1,
     text: "dashboard",
     path: "/",
-    icon: <IoBarChartSharp />,
+    icon: <MdDashboard />,
   },
   {
     id: 2,
     text: "all jobs",
     path: "/all-jobs",
-    icon: <MdQueryStats />,
+    icon: <MdGroupWork />,
   },
   {
     id: 3,
     text: "all applications",
     path: "/all-applications",
-    icon: <MdQueryStats />,
+    icon: <SlEnvolopeLetter />,
   },
   {
     id: 4,
     text: "all interviews",
     path: "/all-interviews",
-    icon: <MdQueryStats />,
+    icon: <BiGroup />,
   },
 ];
 

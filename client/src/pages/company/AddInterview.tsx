@@ -60,7 +60,6 @@ const AddInterview = () => {
 
   useEffect(() => {
     getCompanyJobs();
-    clearValues();
   }, []);
 
   return (

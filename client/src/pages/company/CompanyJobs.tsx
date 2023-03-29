@@ -42,7 +42,6 @@ const CompanyJobs = () => {
           return <Job {...job} key={job._id} />;
         })}
       </div>
-      {/* {numOfPages > 1 && <PageBtnContainer />} */}
     </Wrapper>
   );
 };

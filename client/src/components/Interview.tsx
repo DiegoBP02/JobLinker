@@ -7,14 +7,14 @@ import { InterviewProps, useAppContext } from "../context/appContext";
 import JobInfo from "./JobInfo";
 import Loading from "./Loading";
 import { Link } from "react-router-dom";
+import formatDate from "../utils/formatDate";
 
 const Interview: React.FC<InterviewProps> = (interview) => {
   const { deleteInterview, isLoading, setEditInterview } = useAppContext();
   const { position, status, date, job, user, _id } = interview;
 
-  const momentDate = moment(date);
-  const formattedDate = momentDate.format("DD/MM/YYYY");
-  const formattedTime = momentDate.format("hh:mm A");
+  const formattedDate = formatDate(date);
+  const formattedTime = moment(date).format("hh:mm A");
 
   if (isLoading) {
     return <Loading />;

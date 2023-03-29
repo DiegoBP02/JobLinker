@@ -52,12 +52,13 @@ import {
   GET_ALL_APPLICATIONS_ERROR,
   DELETE_APPLICATION_ERROR,
   DELETE_APPLICATION_BEGIN,
-  GET_ALL_USER_INTERVIEWS_BEGIN,
-  GET_ALL_USER_INTERVIEWS_ERROR,
-  GET_ALL_USER_INTERVIEWS_SUCCESS,
   UPDATE_INTERVIEW_STATUS_BEGIN,
   UPDATE_INTERVIEW_STATUS_SUCCESS,
   UPDATE_INTERVIEW_STATUS_ERROR,
+  GET_REVIEWS_BEGIN,
+  GET_REVIEWS_SUCCESS,
+  GET_REVIEWS_ERROR,
+  TOGGLE_REVIEW,
 } from "./actions";
 import reducer, { ActionType } from "./reducer";
 import axios from "axios";
@@ -187,6 +188,23 @@ export type ApplicationProps = {
   updatedAt: string;
 };
 
+export type ReviewProps = {
+  _id: string;
+  rating: number;
+  title: string;
+  comment: string;
+  user: {
+    _id: string;
+    fullName: string;
+  };
+  job: {
+    _id: string;
+    company: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type InitialStateProps = {
   isLoading: boolean;
   showAlert: boolean;
@@ -271,6 +289,11 @@ export type InitialStateProps = {
   deleteApplication: (id: string) => Promise<void>;
   getAllInterviews: () => Promise<void>;
   updateInterviewStatus: (interviewId: string, status: string) => Promise<void>;
+  getReviews: (jobId: string) => Promise<void>;
+  toggleReview: () => void;
+  showReviews: boolean;
+  reviews: ReviewProps[] | null;
+  totalReviews: number;
 };
 
 export const initialState: InitialStateProps = {
@@ -349,6 +372,11 @@ export const initialState: InitialStateProps = {
   deleteApplication: async () => {},
   getAllInterviews: async () => {},
   updateInterviewStatus: async () => {},
+  getReviews: async () => {},
+  toggleReview: () => {},
+  showReviews: false,
+  reviews: null,
+  totalReviews: 0,
 };
 const AppContext = React.createContext<InitialStateProps>(initialState);
 
@@ -565,7 +593,6 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       await authFetch.post("/interview", formattedData);
 
       dispatch({ type: CREATE_INTERVIEW_SUCCESS });
-      clearValues();
     } catch (error: any) {
       dispatch({
         type: CREATE_INTERVIEW_ERROR,
@@ -613,14 +640,12 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
       dispatch({ type: EDIT_INTERVIEW_SUCCESS });
       clearAlert();
-      clearValues();
     } catch (error: any) {
       dispatch({
         type: EDIT_INTERVIEW_ERROR,
         payload: { msg: error.response.data.msg },
       });
       clearAlert();
-      clearValues();
     }
   };
 
@@ -839,6 +864,30 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
+  const getReviews = async (jobId: string) => {
+    dispatch({ type: GET_REVIEWS_BEGIN });
+
+    try {
+      const { data } = await authFetch.get(`/review/job/${jobId}`);
+      const { reviews, totalCount } = data;
+
+      dispatch({
+        type: GET_REVIEWS_SUCCESS,
+        payload: { reviews, totalReviews: totalCount },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_REVIEWS_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+      clearAlert();
+    }
+  };
+
+  const toggleReview = () => {
+    dispatch({ type: TOGGLE_REVIEW });
+  };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -877,6 +926,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         deleteApplication,
         getAllInterviews,
         updateInterviewStatus,
+        getReviews,
+        toggleReview,
       }}
     >
       {children}

@@ -1,10 +1,10 @@
-import moment from "moment";
 import { FaLocationArrow, FaBriefcase, FaCalendarAlt } from "react-icons/fa";
 import { BsLightningCharge } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { ApplicationProps, useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/Application";
 import JobInfo from "./JobInfo";
+import formatDate from "../utils/formatDate";
 
 const Application: React.FC<ApplicationProps> = (application) => {
   const { deleteApplication } = useAppContext();
@@ -12,7 +12,7 @@ const Application: React.FC<ApplicationProps> = (application) => {
 
   const { position, company, location, type } = job;
 
-  let date = moment(createdAt).format("MMM Do, YYYY");
+  let date = formatDate(createdAt);
 
   return (
     <Wrapper>

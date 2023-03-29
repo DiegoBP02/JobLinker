@@ -9,6 +9,7 @@ import { ApplicantProps, useAppContext } from "../../context/appContext";
 import { FormRowSelect, Loading } from "../../components";
 import { useState } from "react";
 import Wrapper from "../../assets/wrappers/SingleApplication";
+import formatDate from "../../utils/formatDate";
 
 const SingleApplication = () => {
   const { id } = useParams();
@@ -37,9 +38,9 @@ const SingleApplication = () => {
     "rejected",
   ];
 
-  const experienceStart = moment(experience.startDate).format("MMM Do, YYYY");
-  const experienceEnd = moment(experience.endDate).format("MMM Do, YYYY");
-  const gratuationDate = moment(education.graduation).format("MMM Do, YYYY");
+  const experienceStart = formatDate(experience.startDate);
+  const experienceEnd = formatDate(experience.endDate);
+  const gratuationDate = formatDate(education.graduation);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setNewStatus(e.target.value);

@@ -52,12 +52,13 @@ import {
   GET_ALL_APPLICATIONS_ERROR,
   DELETE_APPLICATION_BEGIN,
   DELETE_APPLICATION_ERROR,
-  GET_ALL_USER_INTERVIEWS_BEGIN,
-  GET_ALL_USER_INTERVIEWS_SUCCESS,
-  GET_ALL_USER_INTERVIEWS_ERROR,
   UPDATE_INTERVIEW_STATUS_BEGIN,
   UPDATE_INTERVIEW_STATUS_SUCCESS,
   UPDATE_INTERVIEW_STATUS_ERROR,
+  GET_REVIEWS_BEGIN,
+  GET_REVIEWS_SUCCESS,
+  GET_REVIEWS_ERROR,
+  TOGGLE_REVIEW,
 } from "./actions";
 
 import { initialState, InitialStateProps, InterviewProps } from "./appContext";
@@ -433,26 +434,6 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       alertText: action.payload.msg,
     };
   }
-  if (action.type === GET_ALL_USER_INTERVIEWS_BEGIN) {
-    return { ...state, isLoading: true };
-  }
-  if (action.type === GET_ALL_USER_INTERVIEWS_SUCCESS) {
-    return {
-      ...state,
-      isLoading: false,
-      userInterviews: action.payload.interviews,
-      totalUserInterviews: action.payload.totalInterviews,
-    };
-  }
-  if (action.type === GET_ALL_USER_INTERVIEWS_ERROR) {
-    return {
-      ...state,
-      isLoading: false,
-      showAlert: true,
-      alertType: "danger",
-      alertText: action.payload.msg,
-    };
-  }
   if (action.type === UPDATE_INTERVIEW_STATUS_BEGIN) {
     return { ...state, isLoading: true };
   }
@@ -473,6 +454,29 @@ const reducer: React.Reducer<InitialStateProps, ActionType> = (
       alertType: "danger",
       alertText: action.payload.msg,
     };
+  }
+  if (action.type === GET_REVIEWS_BEGIN) {
+    return { ...state, isLoading: true };
+  }
+  if (action.type === GET_REVIEWS_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      reviews: action.payload.reviews,
+      totalReviews: action.payload.totalReviews,
+    };
+  }
+  if (action.type === GET_REVIEWS_ERROR) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
+  }
+  if (action.type === TOGGLE_REVIEW) {
+    return { ...state, showReviews: !state.showReviews };
   }
   throw new Error(`No such action :${action.type}`);
 };
