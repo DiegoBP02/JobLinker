@@ -10,10 +10,12 @@ const GetAllApplications = () => {
     totalApplications,
     applications,
     isLoading,
+    getAllJobs,
   } = useAppContext();
 
   useEffect(() => {
     getAllApplications();
+    getAllJobs();
   }, []);
 
   if (isLoading) {

@@ -311,7 +311,7 @@ export const initialState: InitialStateProps = {
   date: "",
   createInterview: async () => {},
   time: 16,
-  interviews: [],
+  interviews: null,
   totalInterviews: 0,
   getInterviews: async () => {},
   deleteInterview: async () => {},
